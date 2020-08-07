@@ -10,4 +10,5 @@
 # instruction
  Ignore my bad coding habits.  
  For the HTML projects, use compiled.html if possible, page.html if not.  
- I use nodeJS to execute my code just for the sake of convenience, I don't use external libraries anyway so any compiler should work.
+ I use nodeJS to execute my code just for the sake of convenience, I don't use external libraries anyway so any compiler should work.  
+ For the discord bots or other stuff with tokens, I've replaced the token values with `no lol` so do a replace if you want to use the bots.
