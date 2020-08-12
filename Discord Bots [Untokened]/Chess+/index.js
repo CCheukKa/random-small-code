@@ -16,7 +16,7 @@ const commandPrefix = ['!', '/', '`', '.', ','];
 const whitelistedChannels = ['no lol'];
 //                          []
 const adminList = ['318005585951850517'];
-//                [CCheukKa]
+//                [            CCheukKa]
 //
 
 //Canvas
@@ -24,13 +24,13 @@ const canvas = createCanvas(100,100);
 const ctx = canvas.getContext('2d');
 //
 const tileSize = 160;
-const width = tileSize * 9;
-const height = tileSize * 10;
+const width = tileSize * 9.5;
+const height = tileSize * 10.5;
 //
-const palette = ['#AAAF9D', '#B3C49B', '#609868'];
-//              [ outboard,   inboard,      line]
-const drawCoord = false;
+const palette = ['#AAAF9D', '#B3C49B', '#609868', '#EE363D'];
+//              [ outboard,   inboard,      line, last move]
 //
+var lastMove = [];
 canvas.width = width;
 canvas.height = height;
 const boardInit = [
@@ -45,7 +45,7 @@ const boardInit = [
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [ 6, 5, 2, 3, 7, 3, 2, 5, 6]
 ];
-var board = boardInit;
+var board = JSON.parse(JSON.stringify(boardInit));
 //
 
 //Load images
@@ -83,7 +83,7 @@ var wCannon, wElephant, wHorse, wKing, wPawn, wRook, wServant;
 */
 
 //
-const adminCommands = ['reset', 'forcemove', 'add'];
+const adminCommands = ['reset', 'forcemove', 'add', 'printstate', 'enforcestate'];//lowercase
 
 bot.on('message', message => {
     if (message.member.id == bot.user.id) { return };
@@ -91,12 +91,16 @@ bot.on('message', message => {
     let content = message.content.toString();
     if (!commandPrefix.includes(content.substring(0, 1))) { return };
     let args = content.substring(1).split(' ');
+    args[0] = args[0].toLowerCase();
     //regular
     switch (args[0]) {
-        case 'channelID':
+        case 'help':
+            message.channel.send("My prefix is `! / . , *``\nHere is my list of commands:\n`help`: This\n`adminHelp`: A list of admin commands\n`myID`: See your user ID\n`channelID`: See the channel's ID\n`board`: See the current board state\n`move <coord1> <coord2>`: Move a piece from `<coord1>` to `<coord2>`");
+            break;
+        case 'channelid':
             message.channel.send('Channel ID for "' + message.channel.name + '" is:\n' + message.channel.id);
             break;
-        case 'myID':
+        case 'myid':
             message.reply('your user ID is:\n' + message.member.id);
             break;
         case 'board':
@@ -120,7 +124,8 @@ bot.on('message', message => {
     //admin
     switch (args[0]) {
         case 'reset':
-            board = boardInit;
+            board = JSON.parse(JSON.stringify(boardInit));
+            lastMove = [];
             redraw();
             sendBoard(message.channel);
             break;
@@ -134,6 +139,16 @@ bot.on('message', message => {
             if (errorMessage) { message.reply(errorMessage) };
             sendBoard(message.channel);
             break;
+        case 'printstate':
+            message.channel.send(JSON.stringify(board));
+            break;
+        case 'enforcestate':
+            board = JSON.parse(args[1]);
+            lastMove = [];
+            redraw();
+            sendBoard(message.channel);
+            message.reply('board state enforced');
+            break;
         default:
             break;
     }
@@ -146,7 +161,7 @@ bot.on('message', message => {
 //===================================================================
 function sendBoard(channel) {
     let buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync('./test.png', buffer);
+    //fs.writeFileSync('./test.png', buffer);
     const attachment = new Discord.MessageAttachment(buffer);
     channel.send(attachment);
     return;
@@ -198,7 +213,7 @@ function executeMove(home, goal) {
             errorMessage += '\nInvalid column: ' + home.substring(0, 1);
             break;
     }
-    if (!isWithinInclusiveRange(yHome, 1, 10)) {
+    if (!isWithinInclusiveRange(yHome, 0, 9)) {
         errorMessage += '\nInvalid row: ' + yHome;
     }
     switch (goal.substring(0, 1)) {
@@ -224,19 +239,19 @@ function executeMove(home, goal) {
             errorMessage += '\nInvalid column: ' + goal.substring(0, 1);
             break;
     }
-    if (!isWithinInclusiveRange(yGoal, 1, 10)) {
+    if (!isWithinInclusiveRange(yGoal, 0, 9)) {
         errorMessage += '\nInvalid row: ' + yGoal;
     }
     if (errorMessage) { return errorMessage };
     //
     //logicCheck
-    let logicError = logicCheck(xHome, 10 - yHome, xGoal, 10 - yGoal);
+    let logicError = logicCheck(xHome, 9 - yHome, xGoal, 9 - yGoal);
     if (logicError) { return logicError };
     //executeMove
-    console.log(board[yGoal][xGoal]);
-    console.log(board[yHome][xHome]);
-    board[10 - yGoal][xGoal] = board[10 - yHome][xHome];
-    board[10 - yHome][xHome] = 0;
+    board[9 - yGoal][xGoal] = board[9 - yHome][xHome];
+    board[9 - yHome][xHome] = 0;
+    //logLastMove
+    lastMove = [xHome, 9 - yHome, xGoal, 9 - yGoal];
     redraw();
     return;
 }
@@ -270,7 +285,7 @@ function forceMove(home, goal) {
             errorMessage += '\nInvalid column: ' + home.substring(0, 1);
             break;
     }
-    if (!isWithinInclusiveRange(yHome, 1, 10)) {
+    if (!isWithinInclusiveRange(yHome, 0, 9)) {
         errorMessage += '\nInvalid row: ' + yHome;
     }
     switch (goal.substring(0, 1)) {
@@ -296,7 +311,7 @@ function forceMove(home, goal) {
             errorMessage += '\nInvalid column: ' + goal.substring(0, 1);
             break;
     }
-    if (!isWithinInclusiveRange(yGoal, 1, 10)) {
+    if (!isWithinInclusiveRange(yGoal, 0, 9)) {
         errorMessage += '\nInvalid row: ' + yGoal;
     }
     if (errorMessage) { return errorMessage };
@@ -304,8 +319,8 @@ function forceMove(home, goal) {
     //executeMove
     console.log(board[yGoal][xGoal]);
     console.log(board[yHome][xHome]);
-    board[10 - yGoal][xGoal] = board[10 - yHome][xHome];
-    board[10 - yHome][xHome] = 0;
+    board[9 - yGoal][xGoal] = board[9 - yHome][xHome];
+    board[9 - yHome][xHome] = 0;
     redraw();
     return;
 }
@@ -502,28 +517,33 @@ function logicCheck(xHome, yHome, xGoal, yGoal) {
 //===================================================================
 function redraw() {
     drawBoard();
-    drawPiece();
-    if (drawCoord) { drawCoords(); }
+    drawLastMove();
+    drawPieces();
+    drawCoords();
+    return;
+}
+function drawLastMove() {
+    drawLine((lastMove[0] + 1) * tileSize, (lastMove[1] + 0.5) * tileSize, (lastMove[2] + 1) * tileSize, (lastMove[3] + 0.5) * tileSize, palette[3]);
     return;
 }
 function drawBoard() {
     drawRect(0, 0, width, height, palette[0]);
-    drawRect(0.5 * tileSize, 0.5 * tileSize, 8 * tileSize, 9 * tileSize, palette[1]);
+    drawRect(1 * tileSize, 0.5 * tileSize, 8 * tileSize, 9 * tileSize, palette[1]);
     for (let i = 0; i < 9; i++) {
-        drawLine((i + 0.5) * tileSize, tileSize / 2, (i + 0.5) * tileSize, 4.5 * tileSize, palette[2]);
+        drawLine((i + 1) * tileSize, tileSize / 2, (i + 1) * tileSize, 4.5 * tileSize, palette[2]);
     }
     for (let i = 0; i < 9; i++) {
-        drawLine((i + 0.5) * tileSize, 5.5 * tileSize, (i + 0.5) * tileSize, 9.5 * tileSize, palette[2]);
+        drawLine((i + 1) * tileSize, 5.5 * tileSize, (i + 1) * tileSize, 9.5 * tileSize, palette[2]);
     }
     for (let i = 0; i < 10; i++) {
-        drawLine(tileSize / 2, (i + 0.5) * tileSize, 8.5 * tileSize, (i + 0.5) * tileSize, palette[2]);
+        drawLine(tileSize, (i + 0.5) * tileSize, 9 * tileSize, (i + 0.5) * tileSize, palette[2]);
     }
-    drawLine(tileSize / 2, tileSize / 2, tileSize / 2, 9.5 * tileSize);
-    drawLine(8.5 * tileSize, tileSize / 2, 8.5 * tileSize, 9.5 * tileSize);
-    drawLine(3.5 * tileSize, 0.5 * tileSize, 5.5 * tileSize, 2.5 * tileSize);
-    drawLine(3.5 * tileSize, 2.5 * tileSize, 5.5 * tileSize, 0.5 * tileSize);
-    drawLine(3.5 * tileSize, 7.5 * tileSize, 5.5 * tileSize, 9.5 * tileSize);
-    drawLine(3.5 * tileSize, 9.5 * tileSize, 5.5 * tileSize, 7.5 * tileSize);
+    drawLine(tileSize, tileSize / 2, tileSize, 9.5 * tileSize);
+    drawLine(9 * tileSize, tileSize / 2, 9 * tileSize, 9.5 * tileSize);
+    drawLine(4 * tileSize, 0.5 * tileSize, 6 * tileSize, 2.5 * tileSize);
+    drawLine(4 * tileSize, 2.5 * tileSize, 6 * tileSize, 0.5 * tileSize);
+    drawLine(4 * tileSize, 7.5 * tileSize, 6 * tileSize, 9.5 * tileSize);
+    drawLine(4 * tileSize, 9.5 * tileSize, 6 * tileSize, 7.5 * tileSize);
     return;
 }
 function drawRect(x1, y1, dx, dy, colour) {
@@ -532,13 +552,17 @@ function drawRect(x1, y1, dx, dy, colour) {
         return;
 }
 function drawLine(x1, y1, x2, y2, colour) {
+    ctx.closePath();
+    ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineWidth = tileSize / 12;
     ctx.strokeStyle = colour;
     ctx.stroke();
+    ctx.closePath();
+    return;
 }
-function drawPiece() {
+function drawPieces() {
     var piece;
     var noDraw = false;
     for (let i = 0; i < 10; i++) {
@@ -560,19 +584,37 @@ function drawPiece() {
                 case -7: { piece = bKing; break; }
                 default: { noDraw = true; break; }
             }
-            if (!noDraw) { ctx.drawImage(piece, j * tileSize, i * tileSize, tileSize, tileSize) };
+            if (!noDraw) { ctx.drawImage(piece, (j + 0.5) * tileSize, i * tileSize, tileSize, tileSize) };
             noDraw = false;
         }
     }
 }
 function drawCoords() {
+    let coordText = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
     for (let i = 1; i <= 10; i++) {
-        drawText(i, tileSize / 10, (i - 0.35) * tileSize, 'white');
+        drawText(10 - i, 0.6 * tileSize, (i - 0.35) * tileSize, 'black', 2);
+        if (i == 10) { return };
+        drawText(coordText[i - 1], i * tileSize, 10.3 * tileSize, 'black', 0);
     }
+    return;
 }
-function drawText(text, x, y, colour) {
-    ctx.font = 'bold 30px sans-serif';
+function drawText(text, x, y, colour, align = 1) {
+    ctx.font = 'bold ' + tileSize / 8 * 3 + 'px Trebuchet MS';
     ctx.fillStyle = colour;
+    switch (align) {
+        case 0:
+            ctx.textAlign = 'center';
+            break;
+        case 1:
+            ctx.textAlign = 'left';
+            break;
+        case 2:
+            ctx.textAlign = 'right';
+            break;
+        default:
+            console.log('Unknown text-alignment: ' + align);
+            break;
+    }
     ctx.fillText(text, x, y);
     return;
 }
