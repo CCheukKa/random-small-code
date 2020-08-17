@@ -1,0 +1,19 @@
+{
+    "admin": {
+        "IDlist": ["318005585951850517"],
+        "commands": ["reset", "forcemove", "add", "enforcestate"]
+    },
+    "discord": {
+        "whitelistedChannels": ["702023212631851058", "742996004462133329"],
+        "commandPrefix": ["!", "/", ".", ",", "`"]
+    },
+    "canvas": {
+        "tileSize": 160,
+        "palette": {
+            "outboard": "#AAAF9D",
+            "inboard": "#B3C49B",
+            "gridline": "#609868",
+            "lastMoveLine": "#EE363D"
+        }
+    }
+}
