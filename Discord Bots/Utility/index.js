@@ -1,14 +1,11 @@
-var intervalFunction;
-
-//#region	//! Dependencies + Config fetch
+//#region	//! Initialisation + Dependencies + Config fetch
 const fs = require("fs");
 const discord = require("discord.js");
 const { setInterval } = require("timers");
-const { error } = require("console");
-var botConfig;
+var intervalFunction, botConfig;
+generateLog('Initialised', '--------------------');
 updateParameters();
 //#endregion
-
 //#region	//! Discord
 const bot = new discord.Client();
 const token = fs.readFileSync("./appdata/token.txt", "utf-8");
@@ -19,7 +16,16 @@ bot.on("ready", () => {
 });
 //#endregion
 
-bot.on("message", (message) => { handleMessage(message) });
+bot.on("message", (message) => {
+    if (!botConfig.admin.idList.includes(message.author.id)) { return; }
+    if (!botConfig.discord.commandPrefix.includes(message.content.substring(0, 1))) { return; }
+    let args = message.content.substring(1).split(' ');
+    switch (args[0].toLowerCase()) {
+        case 'updateparameters':
+            updateParameters();
+            break;
+    }
+});
 
 bot.on("voiceStateUpdate", (oldMember, newMember) => {
     let oldChannel = oldMember.channel;
@@ -49,19 +55,6 @@ bot.on("voiceStateUpdate", (oldMember, newMember) => {
 });
 
 //#region   // Custom functions
-//#region   //? Message handler
-function handleMessage(message) {
-    if (!botConfig.admin.idList.includes(message.author.id)) { return; }
-    if (!botConfig.discord.commandPrefix.includes(message.content.substring(0, 1))) { return; }
-    let args = message.content.substring(1).split(' ');
-    switch (args[0].toLowerCase()) {
-        case 'updateparameters':
-            updateParameters();
-            break;
-    }
-}
-//#endregion
-//#endregion
 //#region   //! Parameters
 function updateParameters() {
     if (intervalFunction) { clearInterval(intervalFunction); }
@@ -85,7 +78,7 @@ function intervalPerMinute() {
                 if (member.voiceIdleTime == 0) {
                     member.voice.kick('Auto-kicked for idling for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes');
                     member.send('You are auto-kicked from the voice channel **__' + channel.name + '__** in **__' + guild.name + '__** for idling alone for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes.').catch(error => { console.error(error) });
-                    generateLog('Kicked', member.displayName + ' from ' + channel.name + ' in ' + guild.name);
+                    generateLog('Kicked', member.user.username + '(' + member.id + ') from ' + channel.name + '(' + channel.id + ') in ' + guild.name + '(' + guild.id + ')');
                     member.voiceIdleTime = -1;
                 }
             });
@@ -105,5 +98,6 @@ function generateLog(action, content) {
     fs.appendFile('./appdata/log.txt', logMessage + '\n', function(err) { if (err) throw err; })
     return;
 }
+//#endregion
 //#endregion
 //#endregion
