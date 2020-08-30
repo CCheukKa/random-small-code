@@ -1,13 +1,13 @@
-//#region	//! Dependencies
+//#region	//! Dependencies + Config fetch
 const fs = require("fs");
-const Discord = require("discord.js");
+const discord = require("discord.js");
 const { createCanvas, loadImage } = require("canvas");
-//#endregion
 var botConfig;
 updateParameters();
+//#endregion
 
 //#region	//! Discord
-const bot = new Discord.Client();
+const bot = new discord.Client();
 const token = fs.readFileSync("./appdata/token.txt", "utf-8");
 bot.login(token);
 bot.on("ready", () => {
@@ -39,7 +39,7 @@ const boardInit = [
 var board = JSON.parse(JSON.stringify(boardInit));
 //#endregion
 
-//#region	//!Load images
+//#region	//! Load images
 var bCannon, bElephant, bHorse, bKing, bPawn, bRook, bServant;
 var wCannon, wElephant, wHorse, wKing, wPawn, wRook, wServant;
 loadImage("./pieces/bCannon.svg").then((image) => {
@@ -86,55 +86,176 @@ loadImage("./pieces/wServant.svg").then((image) => {
 });
 //#endregion
 
-//#region	//!Pieces
-/*
-0: empty
-1: pawn
-2: elephant
-3: servant
-4: cannon
-5: horse
-6: rook
-7: king
-+: White    -: Black
-*/
+//#region   //! Class definitions
+var games = [],
+    users = [];
+class Game {
+    constructor(players, board = JSON.parse(JSON.stringify(boardInit))) {
+        this.board = board;
+        this.players = [];
+        this.players.concat(players);
+        games.push(this);
+        players.forEach(player => {
+            player.games.push(this);
+        });
+        console.log('Game created with ' + players[0] + ' and ' + player[1]);
+        return;
+    }
+    randomiseColour() {
+        if (Math.random() > 0.5) {
+            this.white = players[0];
+            this.black = player[1];
+        } else {
+            this.white = player[1];
+            this.black = player[0];
+        }
+    }
+    move(home, goal) {
+        if (!goal) {
+            return "please input the destination";
+        }
+        //parsing
+        let xHome = 0,
+            xGoal = 0;
+        let yHome = home.substring(1);
+        let yGoal = goal.substring(1);
+        let errorMessage = "";
+        switch (home.substring(0, 1)) {
+            case "i":
+            case "I":
+                xHome++;
+            case "h":
+            case "H":
+                xHome++;
+            case "g":
+            case "G":
+                xHome++;
+            case "f":
+            case "F":
+                xHome++;
+            case "e":
+            case "E":
+                xHome++;
+            case "d":
+            case "D":
+                xHome++;
+            case "c":
+            case "C":
+                xHome++;
+            case "b":
+            case "B":
+                xHome++;
+            case "a":
+            case "A":
+                break;
+            default:
+                errorMessage += "\nInvalid column: " + home.substring(0, 1);
+                break;
+        }
+        if (!isWithinInclusiveRange(yHome, 0, 9)) {
+            errorMessage += "\nInvalid row: " + yHome;
+        }
+        switch (goal.substring(0, 1)) {
+            case "i":
+            case "I":
+                xGoal++;
+            case "h":
+            case "H":
+                xGoal++;
+            case "g":
+            case "G":
+                xGoal++;
+            case "f":
+            case "F":
+                xGoal++;
+            case "e":
+            case "E":
+                xGoal++;
+            case "d":
+            case "D":
+                xGoal++;
+            case "c":
+            case "C":
+                xGoal++;
+            case "b":
+            case "B":
+                xGoal++;
+            case "a":
+            case "A":
+                break;
+            default:
+                errorMessage += "\nInvalid column: " + goal.substring(0, 1);
+                break;
+        }
+        if (!isWithinInclusiveRange(yGoal, 0, 9)) {
+            errorMessage += "\nInvalid row: " + yGoal;
+        }
+        if (errorMessage) {
+            return errorMessage;
+        }
+        //
+        //logicCheck
+        let logicError = logicCheck(xHome, 9 - yHome, xGoal, 9 - yGoal);
+        if (logicError) {
+            return logicError;
+        }
+        //executeMove
+        board[9 - yGoal][xGoal] = board[9 - yHome][xHome];
+        board[9 - yHome][xHome] = 0;
+        //logLastMove
+        lastMove = [xHome, 9 - yHome, xGoal, 9 - yGoal];
+        redraw();
+        return;
+    }
+}
+class User {
+    constructor(id, games) {
+        this.id = id;
+        this.games = [];
+        this.games.concat(games);
+        users.push(this);
+        return;
+    }
+    executeMove(home, goal) {
+
+    }
+}
 //#endregion
 
-//#region	//! Actual code
-bot.on("message", (message) => {
+bot.on("message", (message) => { handleMessage(message) });
+
+//#region   // Custom functions
+//#region   //? Message handler
+function handleMessage(message) {
     if (message.member.id == bot.user.id) { return; }
     if (!botConfig.discord.whitelistedChannels.includes(message.channel.id)) { return; }
     let content = message.content.toString();
     if (!botConfig.discord.commandPrefix.includes(content.substring(0, 1))) { return; }
     let args = content.substring(1).split(" ");
     args[0] = args[0].toLowerCase();
-    //regular
+    console.log('Content: ' + message.content);
+    console.log('Args: ' + args);
     switch (args[0]) {
+        //! Regular commands
+        case "newgame":
+            if (args.length != 3) {
+                message.reply('you must @ exactly two person to start the game! (Check the spaces!)');
+                return;
+            }
+            message.channel.send(createGame(args[1].substring(2, 20), args[2].substring(2, 20)));
+            break;
         case "help":
             message.channel.send(
                 "My prefix is `! / . ,`\nHere is my list of commands:\n`help`: This\n`adminHelp`: A list of admin commands\n`myID`: See your user ID\n`channelID`: See the channel's ID\n`board`: See the current board state\n`move <coord1> <coord2>`: Move a piece from `<coord1>` to `<coord2>`\n`printstate`: Output the board state to save it for later\n`material`: Shows the material evaluation of the current board position"
             );
-            break;
-        case "channelid":
-            message.channel.send(
-                'Channel ID for "' +
-                message.channel.name +
-                '" is:\n' +
-                message.channel.id
-            );
-            break;
-        case "myid":
-            message.reply("your user ID is:\n" + message.member.id);
             break;
         case "board":
             redraw();
             sendBoard(message.channel);
             break;
         case "move":
-            var errorMessage = executeMove(args[1], args[2]);
-            if (errorMessage) {
-                message.reply(errorMessage);
-            }
+            var errorMessage = getUserByIDElseCreate(message.author.id).executeMove(args[1], args[2]);
+            if (errorMessage) { message.reply(errorMessage); }
             sendBoard(message.channel);
             break;
         case "printstate":
@@ -180,11 +301,7 @@ bot.on("message", (message) => {
                 });
             });
             message.channel.send(
-                "White has " +
-                white +
-                " material points.\nBlack has " +
-                black +
-                " material points."
+                "White has " + white + " material points.\nBlack has " + black + " material points."
             );
             break;
         default:
@@ -192,12 +309,12 @@ bot.on("message", (message) => {
     }
     //
     if (!botConfig.admin.commands.includes(args[0])) { return; }
-    if (!botConfig.admin.list.includes(message.member.id)) {
+    if (!botConfig.admin.IDlist.includes(message.member.id)) {
         message.reply(args[0] + " command is reserved for admin only!");
         return;
     }
-    //admin
     switch (args[0]) {
+        //! Admin commands
         case "reset":
             board = JSON.parse(JSON.stringify(boardInit));
             lastMove = [];
@@ -229,19 +346,17 @@ bot.on("message", (message) => {
             break;
     }
     return;
-});
+}
 //#endregion
-
-
-//===================================================================
+//#region   //! Miscellaneous
 function updateParameters() {
     botConfig = JSON.parse(fs.readFileSync("./appdata/botConfig.json"));
     return;
 }
-
-//===================================================================
+//#endregion
+//#region   //! Print interface
 function sendBoard(channel) {
-    const attachment = new Discord.MessageAttachment(canvas.toBuffer("image/png"));
+    const attachment = new discord.MessageAttachment(canvas.toBuffer("image/png"));
     channel.send(attachment);
     return;
 }
@@ -281,105 +396,8 @@ function toCoords(x, y) {
     }
     return xCoord + y;
 }
-//===================================================================
-function executeMove(home, goal) {
-    if (!goal) {
-        return "please input the destination";
-    }
-    //parsing
-    let xHome = 0,
-        xGoal = 0;
-    let yHome = home.substring(1);
-    let yGoal = goal.substring(1);
-    let errorMessage = "";
-    switch (home.substring(0, 1)) {
-        case "i":
-        case "I":
-            xHome++;
-        case "h":
-        case "H":
-            xHome++;
-        case "g":
-        case "G":
-            xHome++;
-        case "f":
-        case "F":
-            xHome++;
-        case "e":
-        case "E":
-            xHome++;
-        case "d":
-        case "D":
-            xHome++;
-        case "c":
-        case "C":
-            xHome++;
-        case "b":
-        case "B":
-            xHome++;
-        case "a":
-        case "A":
-            break;
-        default:
-            errorMessage += "\nInvalid column: " + home.substring(0, 1);
-            break;
-    }
-    if (!isWithinInclusiveRange(yHome, 0, 9)) {
-        errorMessage += "\nInvalid row: " + yHome;
-    }
-    switch (goal.substring(0, 1)) {
-        case "i":
-        case "I":
-            xGoal++;
-        case "h":
-        case "H":
-            xGoal++;
-        case "g":
-        case "G":
-            xGoal++;
-        case "f":
-        case "F":
-            xGoal++;
-        case "e":
-        case "E":
-            xGoal++;
-        case "d":
-        case "D":
-            xGoal++;
-        case "c":
-        case "C":
-            xGoal++;
-        case "b":
-        case "B":
-            xGoal++;
-        case "a":
-        case "A":
-            break;
-        default:
-            errorMessage += "\nInvalid column: " + goal.substring(0, 1);
-            break;
-    }
-    if (!isWithinInclusiveRange(yGoal, 0, 9)) {
-        errorMessage += "\nInvalid row: " + yGoal;
-    }
-    if (errorMessage) {
-        return errorMessage;
-    }
-    //
-    //logicCheck
-    let logicError = logicCheck(xHome, 9 - yHome, xGoal, 9 - yGoal);
-    if (logicError) {
-        return logicError;
-    }
-    //executeMove
-    board[9 - yGoal][xGoal] = board[9 - yHome][xHome];
-    board[9 - yHome][xHome] = 0;
-    //logLastMove
-    lastMove = [xHome, 9 - yHome, xGoal, 9 - yGoal];
-    redraw();
-    return;
-}
-
+//#endregion
+//#region   //! Chessboard logic
 function forceMove(home, goal) {
     if (!goal) {
         return "please input the destination";
@@ -723,7 +741,20 @@ function logicCheck(xHome, yHome, xGoal, yGoal) {
             }
     }
 }
-//===================================================================
+//#endregion
+//#region   //! User + Game Management
+function getUserByIDElseCreate(queryID) {
+    let gotUser;
+    users.forEach(user => { if (user.id.toString() == queryID.toString()) { gotUser = user; } })
+    if (!gotUser) { return new User(queryID.toString()) };
+    return gotUser;
+}
+
+function createGame(player1ID, player2ID) {
+    console.log(player1ID, player2ID);
+}
+//#endregion
+//#region   //! Draw functions
 function redraw() {
     drawBoard();
     drawLastMove();
@@ -934,10 +965,27 @@ function drawText(text, x, y, colour, align = 1) {
     ctx.fillText(text, x, y);
     return;
 }
-//===================================================================
+//#endregion
+//#region   //! Math functions
 function isWithinInclusiveRange(test, lower, upper) {
     if (lower > upper) {
         return isWithinInclusiveRange(test, upper, lower);
     }
     return lower <= test && test <= upper;
 }
+//#endregion
+//#endregion
+
+//#region	//? Pieces
+/*
+0: empty
+1: pawn
+2: elephant
+3: servant
+4: cannon
+5: horse
+6: rook
+7: king
++: White    -: Black
+*/
+//#endregion

@@ -1,4 +1,6 @@
-console.log(Math.round(Math.log10(num) + 0.5));
+let a = [1, 2, -6, 7, 4, -33];
+
+console.log('x = ' + simultaneousEquation(a[0], a[1], a[2], a[3], a[4], a[5])[0] + '\ny = ' + simultaneousEquation(a[0], a[1], a[2], a[3], a[4], a[5])[1]);
 return;
 
 
@@ -6,12 +8,17 @@ return;
 
 
 //================================================================
+function simultaneousEquation(a, b, c, d, e, f) {
+    // aX + bY + c = 0      dX + eY + f = 0
+    let x = -(b * -f + c * e) / (a * e - b * d);
+    let y = -(c - a * -x) / b;
+    return [x, y];
+}
 
-//================================================================
 function isPowerOfFour(num) {
     return (Math.log(num) / Math.log(4) % 1 == 0) * (num > 0);
 }
-//================================================================
+
 function findDuplicates(nums) {
     let count = [];
     let duppedList = [];
@@ -26,7 +33,7 @@ function findDuplicates(nums) {
     });
     return duppedList;
 }
-//================================================================
+
 function reverse(x) {
     const sign = Math.sign(x);
     x = Math.abs(x);
@@ -37,6 +44,7 @@ function reverse(x) {
     }
     return reversed * sign * !(reversed * sign < -Math.pow(2, 31)) * !(reversed * sign > Math.pow(2, 31) - 1);
 }
+
 function arrayPairSum(nums) {
     let sorted = nums.sort((a, b) => a - b);
     var sum = 0;
@@ -45,12 +53,12 @@ function arrayPairSum(nums) {
     }
     return sum;
 }
-//================================================================
+
 function isLongPressedName(name, typed) {
     nameChunk = arrayIntoChunks(name.split(''));
     typedChunk = arrayIntoChunks(typed.split(''));
 
-    if (nameChunk[0].length != typedChunk[0].length) { return false;}
+    if (nameChunk[0].length != typedChunk[0].length) { return false; }
 
     for (let i = 0; i < nameChunk[0].length; i++) {
         if (nameChunk[0][i] != typedChunk[0][i]) {
@@ -65,6 +73,7 @@ function isLongPressedName(name, typed) {
     }
     return true;
 }
+
 function arrayIntoChunks(array) {
 
     var chunks = [];
@@ -84,7 +93,7 @@ function arrayIntoChunks(array) {
 
     return [chunks, lengths];
 }
-//================================================================
+
 function heightChecker(heights) {
     var unsorted = heights;
     var sorted = [];
@@ -95,11 +104,12 @@ function heightChecker(heights) {
 
     var move = 0;
 
-        for (let i = 0; i < unsorted.length; i++) {
-        if (unsorted[i] != sorted[i]) { move++;}
+    for (let i = 0; i < unsorted.length; i++) {
+        if (unsorted[i] != sorted[i]) { move++; }
     }
     return move;
 }
+
 function sortAscending(array) {
     let sorted = [];
     const length = array.length;
@@ -117,13 +127,14 @@ function sortAscending(array) {
     }
     return sorted;
 }
+
 function isSortedAscending(array) {
     for (let i = 0; i < array.length - 1; i++) {
         if (array[i] > array[i + 1]) { return false };
     }
     return true;
 }
-//================================================================
+
 function addStrings(num1, num2) {
     var dummy;
     if (num2.length > num1.length) {
@@ -133,8 +144,8 @@ function addStrings(num1, num2) {
     }
 
     // num1 > num2
-    var num1Rev= reverseArray(num1.split(''));
-    var num2Rev= reverseArray(num2.split(''));
+    var num1Rev = reverseArray(num1.split(''));
+    var num2Rev = reverseArray(num2.split(''));
 
     var length = num1.length; //6
 
@@ -173,11 +184,11 @@ function reverseArray(x) {
     }
     return result;
 }
-//================================================================
+
 function isPalindrome(x) {
     if (x < 0) { return false; }
     if (x == 0) { return true; }
-    
+
 
     var digitCount = Math.round(Math.log10(x) + 0.5);
 
@@ -195,7 +206,7 @@ function isPalindrome(x) {
     }
 
     for (let i = 0; i < digitCount; i++) {
-        if (fromFront[i] != fromBack[i]) { return false;}
+        if (fromFront[i] != fromBack[i]) { return false; }
     }
     return true;
 }

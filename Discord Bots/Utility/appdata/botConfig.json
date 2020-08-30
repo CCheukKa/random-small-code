@@ -1,0 +1,13 @@
+{
+    "admin": {
+        "idList": ["318005585951850517"],
+        "commands": []
+    },
+    "discord": {
+        "whitelistedChannels": [],
+        "commandPrefix": ["!", "/", ".", ",", "`"]
+    },
+    "voice": {
+        "maxIdleTimeInMinutes": 5
+    }
+}
