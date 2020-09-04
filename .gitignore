@@ -1,4 +1,6 @@
-# Versions of some code that contain user tokens
-/Private/*
+/Private/
 token.txt
 log.txt
+botLog.txt
+image.png
+/log/games/

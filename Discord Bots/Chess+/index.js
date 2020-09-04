@@ -3,6 +3,7 @@ const fs = require("fs");
 const discord = require("discord.js");
 const { createCanvas, loadImage } = require("canvas");
 var botConfig;
+generateLog('Initialised', '--------------------');
 updateParameters();
 //#endregion
 
@@ -11,7 +12,7 @@ const bot = new discord.Client();
 const token = fs.readFileSync("./appdata/token.txt", "utf-8");
 bot.login(token);
 bot.on("ready", () => {
-    console.log("Bot is ready");
+    generateLog('Ready', 'Bot');
     bot.user.setActivity("Chess+", { type: "PLAYING" });
 });
 //#endregion
@@ -86,147 +87,30 @@ loadImage("./pieces/wServant.svg").then((image) => {
 });
 //#endregion
 
-//#region   //! Class definitions
-var games = [],
-    users = [];
+//#region   //! Class Definitions
 class Game {
-    constructor(players, board = JSON.parse(JSON.stringify(boardInit))) {
+    constructor(whiteMember, blackMember, board = JSON.parse(JSON.stringify(boardInit))) {
+        this.type = "Chinese Chess";
+        this.whiteMember = whiteMember;
+        this.blackMember = blackMember;
         this.board = board;
-        this.players = [];
-        this.players.concat(players);
-        games.push(this);
-        players.forEach(player => {
-            player.games.push(this);
-        });
-        console.log('Game created with ' + players[0] + ' and ' + player[1]);
-        return;
-    }
-    randomiseColour() {
-        if (Math.random() > 0.5) {
-            this.white = players[0];
-            this.black = player[1];
-        } else {
-            this.white = player[1];
-            this.black = player[0];
-        }
-    }
-    move(home, goal) {
-        if (!goal) {
-            return "please input the destination";
-        }
-        //parsing
-        let xHome = 0,
-            xGoal = 0;
-        let yHome = home.substring(1);
-        let yGoal = goal.substring(1);
-        let errorMessage = "";
-        switch (home.substring(0, 1)) {
-            case "i":
-            case "I":
-                xHome++;
-            case "h":
-            case "H":
-                xHome++;
-            case "g":
-            case "G":
-                xHome++;
-            case "f":
-            case "F":
-                xHome++;
-            case "e":
-            case "E":
-                xHome++;
-            case "d":
-            case "D":
-                xHome++;
-            case "c":
-            case "C":
-                xHome++;
-            case "b":
-            case "B":
-                xHome++;
-            case "a":
-            case "A":
-                break;
-            default:
-                errorMessage += "\nInvalid column: " + home.substring(0, 1);
-                break;
-        }
-        if (!isWithinInclusiveRange(yHome, 0, 9)) {
-            errorMessage += "\nInvalid row: " + yHome;
-        }
-        switch (goal.substring(0, 1)) {
-            case "i":
-            case "I":
-                xGoal++;
-            case "h":
-            case "H":
-                xGoal++;
-            case "g":
-            case "G":
-                xGoal++;
-            case "f":
-            case "F":
-                xGoal++;
-            case "e":
-            case "E":
-                xGoal++;
-            case "d":
-            case "D":
-                xGoal++;
-            case "c":
-            case "C":
-                xGoal++;
-            case "b":
-            case "B":
-                xGoal++;
-            case "a":
-            case "A":
-                break;
-            default:
-                errorMessage += "\nInvalid column: " + goal.substring(0, 1);
-                break;
-        }
-        if (!isWithinInclusiveRange(yGoal, 0, 9)) {
-            errorMessage += "\nInvalid row: " + yGoal;
-        }
-        if (errorMessage) {
-            return errorMessage;
-        }
+        this.isWhiteTurn = true;
+        whiteMember.game = this;
+        blackMember.game = this;
+        this.startTime = getTimeStamp();
         //
-        //logicCheck
-        let logicError = logicCheck(xHome, 9 - yHome, xGoal, 9 - yGoal);
-        if (logicError) {
-            return logicError;
-        }
-        //executeMove
-        board[9 - yGoal][xGoal] = board[9 - yHome][xHome];
-        board[9 - yHome][xHome] = 0;
-        //logLastMove
-        lastMove = [xHome, 9 - yHome, xGoal, 9 - yGoal];
-        redraw();
-        return;
-    }
-}
-class User {
-    constructor(id, games) {
-        this.id = id;
-        this.games = [];
-        this.games.concat(games);
-        users.push(this);
-        return;
-    }
-    executeMove(home, goal) {
-
+        whiteMember.isInGame = true;
+        blackMember.isInGame = true;
+        whiteMember.opponent = blackMember;
+        blackMember.opponent = whiteMember;
+        //
+        gameLog(this, "Initialised", "White: " + memberToLogFormat(whiteMember));
+        gameLog(this, "Initialised", "Black: " + memberToLogFormat(blackMember));
     }
 }
 //#endregion
-
-bot.on("message", (message) => { handleMessage(message) });
-
-//#region   // Custom functions
-//#region   //? Message handler
-function handleMessage(message) {
+bot.on("message", (message) => {
+    //#region   //? Spaghetti code
     if (message.member.id == bot.user.id) { return; }
     if (!botConfig.discord.whitelistedChannels.includes(message.channel.id)) { return; }
     let content = message.content.toString();
@@ -235,19 +119,37 @@ function handleMessage(message) {
     args[0] = args[0].toLowerCase();
     console.log('Content: ' + message.content);
     console.log('Args: ' + args);
+    //#endregion
     switch (args[0]) {
         //! Regular commands
-        case "newgame":
-            if (args.length != 3) {
-                message.reply('you must @ exactly two person to start the game! (Check the spaces!)');
-                return;
+        case 'invite':
+            message.reply(createInvite(message.guild, message.member, message.guild.member(message.mentions.users.first())));
+            break;
+        case 'accept':
+            message.reply(acceptInvite(message.guild, message.member, message.guild.member(message.mentions.users.first())));
+            break;
+        case 'decline':
+            message.reply(declineInivte(message.guild, message.member, message.guild.member(message.mentions.users.first())));
+            break;
+        case 'apologise':
+        case 'apologize':
+            if (message.mentions.users.first() == bot.user) {
+                if (!message.member.botIsAngryAt) {
+                    message.reply(botConfig.flavourText.apology.notAngry);
+                    return;
+                }
+                if (Math.random() < botConfig.flavourText.apology.forgiveChance) { //accept apology
+                    message.reply(botConfig.flavourText.apology.accept);
+                    message.member.botIsAngryAt = false;
+                    return;
+                } else { //not accept apology
+                    message.reply(botConfig.flavourText.apology.notAccept);
+                    return;
+                }
             }
-            message.channel.send(createGame(args[1].substring(2, 20), args[2].substring(2, 20)));
             break;
         case "help":
-            message.channel.send(
-                "My prefix is `! / . ,`\nHere is my list of commands:\n`help`: This\n`adminHelp`: A list of admin commands\n`myID`: See your user ID\n`channelID`: See the channel's ID\n`board`: See the current board state\n`move <coord1> <coord2>`: Move a piece from `<coord1>` to `<coord2>`\n`printstate`: Output the board state to save it for later\n`material`: Shows the material evaluation of the current board position"
-            );
+            message.reply('\n' + botConfig.commandHelp);
             break;
         case "board":
             redraw();
@@ -315,6 +217,13 @@ function handleMessage(message) {
     }
     switch (args[0]) {
         //! Admin commands
+        case 'updateparameters':
+            updateParameters();
+            message.reply("updated parameters");
+            break;
+        case 'test':
+            message.reply('test ' + message.member.toString());
+            break;
         case "reset":
             board = JSON.parse(JSON.stringify(boardInit));
             lastMove = [];
@@ -346,14 +255,9 @@ function handleMessage(message) {
             break;
     }
     return;
-}
-//#endregion
-//#region   //! Miscellaneous
-function updateParameters() {
-    botConfig = JSON.parse(fs.readFileSync("./appdata/botConfig.json"));
-    return;
-}
-//#endregion
+});
+
+//#region   // Custom functions
 //#region   //! Print interface
 function sendBoard(channel) {
     const attachment = new discord.MessageAttachment(canvas.toBuffer("image/png"));
@@ -742,16 +646,123 @@ function logicCheck(xHome, yHome, xGoal, yGoal) {
     }
 }
 //#endregion
-//#region   //! User + Game Management
-function getUserByIDElseCreate(queryID) {
-    let gotUser;
-    users.forEach(user => { if (user.id.toString() == queryID.toString()) { gotUser = user; } })
-    if (!gotUser) { return new User(queryID.toString()) };
-    return gotUser;
+//#region   //! Invite Management
+function createInvite(guild, offerMember, receiverMember) { //* Return value is replied to message author
+    generateLog("Create Invite", "Requested by " + memberToLogFormat(offerMember) + " regarding " + memberToLogFormat(receiverMember));
+    if (!receiverMember) { //no @
+        generateLog("Create Invite", "Denied " + memberToLogFormat(offerMember), "no mention");
+        return botConfig.flavourText.invite.create.noMention;
+    }
+    if (offerMember == receiverMember) { //self invite
+        generateLog("Create Invite", "Denied " + memberToLogFormat(offerMember), " inviting self");
+        return botConfig.flavourText.invite.create.self;
+    }
+    if (receiverMember == guild.member(bot.user)) { //invite bot
+        generateLog("Create Invite", "Denied " + memberToLogFormat(offerMember), "inviting bot");
+        if (offerMember.botIsAngryAt) {
+            return botConfig.flavourText.invite.create.botAngry;
+        }
+        return botConfig.flavourText.invite.create.bot;
+    }
+    if (!offerMember.invitingList) {
+        offerMember.invitingList = [];
+    }
+    if (offerMember.invitingList.includes(receiverMember)) {
+        generateLog("Create Invite", "Denied " + memberToLogFormat(offerMember), " already invited");
+        return botConfig.flavourText.invite.create.alreadyInvited[0] + receiverMember.toString() + botConfig.flavourText.invite.create.alreadyInvited[1];
+    }
+    offerMember.invitingList.push(receiverMember);
+    generateLog("Create Invite", "Successful by " + memberToLogFormat(offerMember) + " regarding " + memberToLogFormat(receiverMember));
+    return botConfig.flavourText.invite.create.successful[0] + receiverMember.toString() + botConfig.flavourText.invite.create.successful[1];
 }
 
-function createGame(player1ID, player2ID) {
-    console.log(player1ID, player2ID);
+function acceptInvite(guild, acceptorMember, inviterMember) { //* Return value is replied to message author
+    generateLog("Accept Invite", "Requested by " + memberToLogFormat(acceptorMember) + " regarding " + memberToLogFormat(inviterMember));
+    if (!inviterMember) { //no @
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "no mention");
+        return botConfig.flavourText.invite.accept.noMention;
+    }
+    if (acceptorMember == inviterMember) { //self accept
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "accepting self");
+        return botConfig.flavourText.invite.accept.self;
+    }
+    if (inviterMember == guild.member(bot.user)) { //decline bot
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "accepting bot");
+        if (acceptorMember.botIsAngryAt) {
+            return botConfig.flavourText.invite.accept.botAngry;
+        }
+        return botConfig.flavourText.invite.accept.bot;
+    }
+    if (!inviterMember.invitingList) {
+        inviterMember.invitingList = [];
+    }
+    if (!inviterMember.invitingList.includes(acceptorMember)) {
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "not invited");
+        return botConfig.flavourText.invite.accept.noInvite;
+    }
+    if (acceptorMember.isInGame) {
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "acceptor in game");
+        return botConfig.flavourText.invite.accept.acceptorInGame;
+    }
+    if (inviterMember.isInGame) {
+        generateLog("Accept Invite", "Denied " + memberToLogFormat(acceptorMember), "inviter in game");
+        return inviterMember.toString() + botConfig.flavourText.invite.accept.inviterInGame[0] + inviterMember.opponent.toString() + botConfig.flavourText.invite.accept.inviterInGame[1];
+    }
+    for (let i = 0; i < inviterMember.invitingList.length; i++) {
+        if (inviterMember.invitingList[i] == acceptorMember) {
+            inviterMember.invitingList.splice(i, 1);
+            generateLog("Accept Invite", "Successful by " + memberToLogFormat(acceptorMember) + " regarding " + memberToLogFormat(inviterMember));
+            createGame(inviterMember, acceptorMember);
+            return botConfig.flavourText.invite.accept.successful[0] + inviterMember.toString() + botConfig.flavourText.invite.accept.successful[1];
+        }
+    }
+    generateLog("ERROR", memberToLogFormat(acceptorMember) + " regarding " + memberToLogFormat(inviterMember), botConfig.flavourText.invite.accept.error.loopEscaped);
+    return botConfig.flavourText.invite.accept.error.loopEscaped;
+}
+
+function declineInivte(guild, declinerMember, inviterMember) { //* Return value is replied to message author
+    generateLog("Decline Invite", "Requested by " + memberToLogFormat(declinerMember) + " regarding " + memberToLogFormat(inviterMember));
+    if (!inviterMember) { //no @
+        generateLog("Decline Invite", "Denied " + memberToLogFormat(declinerMember), "no mention");
+        return botConfig.flavourText.invite.decline.noMention;
+    }
+    if (declinerMember == inviterMember) { //self decline
+        generateLog("Decline Invite", "Denied " + memberToLogFormat(declinerMember), "declining self");
+        return botConfig.flavourText.invite.decline.self;
+    }
+    if (inviterMember == guild.member(bot.user)) { //decline bot
+        generateLog("Decline Invite", "Denied " + memberToLogFormat(declinerMember), "decling bot");
+        if (declinerMember.botIsAngryAt) {
+            return botConfig.flavourText.invite.decline.botAngry;
+        }
+        declinerMember.botIsAngryAt = true;
+        return botConfig.flavourText.invite.decline.bot;
+    }
+    if (!inviterMember.invitingList) {
+        inviterMember.invitingList = [];
+    }
+    if (!inviterMember.invitingList.includes(declinerMember)) {
+        generateLog("Decline Invite", "Denied " + memberToLogFormat(declinerMember), "not invited");
+        return botConfig.flavourText.invite.decline.noInvite;
+    }
+    for (let i = 0; i < inviterMember.invitingList.length; i++) {
+        if (inviterMember.invitingList[i] == declinerMember) {
+            inviterMember.invitingList.splice(i, 1);
+            generateLog("Decline Invite", "Successful by " + memberToLogFormat(declinerMember) + " regarding " + memberToLogFormat(inviterMember));
+            return botConfig.flavourText.invite.decline.successful[0] + inviterMember.toString() + botConfig.flavourText.invite.decline.successful[1];
+        }
+    }
+    generateLog("ERROR", memberToLogFormat(declinerMember) + " regarding " + memberToLogFormat(inviterMember), botConfig.flavourText.invite.decline.error.loopEscaped);
+    return botConfig.flavourText.invite.decline.error.loopEscaped;
+}
+
+function createGame(member1, member2) {
+    if (Math.random() > 0.5) {
+        new Game(member1, member2);
+    } else {
+        new Game(member2, member1);
+    }
+    return;
 }
 //#endregion
 //#region   //! Draw functions
@@ -972,6 +983,61 @@ function isWithinInclusiveRange(test, lower, upper) {
         return isWithinInclusiveRange(test, upper, lower);
     }
     return lower <= test && test <= upper;
+}
+//#endregion
+//#region   //! Meta
+function updateParameters() {
+    botConfig = JSON.parse(fs.readFileSync("./appdata/botConfig.json"));
+    botConfig.commandHelp = fs.readFileSync("./appdata/commandHelp.txt", "utf-8");
+    generateLog("Updated", "Parameters");
+    return;
+}
+
+function getTimeStamp() {
+    let d = new Date();
+    return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ', ' + d.toLocaleTimeString();
+}
+
+function getTimeStampYMD() {
+    let d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 101).toString().substring(1) + '-' + (d.getDate() + 100).toString().substring(1) + ' ' + d.toLocaleTimeString().replace(":", "-").replace(":", "-");
+}
+
+function generateLog(action, content, reason) {
+    let logMessage = getTimeStamp() + ' => ' + action + ': ' + content;
+    if (reason) {
+        logMessage += ', ' + reason;
+    }
+    console.log(logMessage);
+    fs.appendFile('./appdata/log/botLog.txt', logMessage + '\n', function(err) { if (err) throw err; });
+    return;
+}
+
+function memberToLogFormat(member) {
+    if (!member) { return "(NULL member)" };
+    return member.user.username + '(' + member.user.id + ')';
+}
+
+function channelToLogFormat(channel) {
+    if (!channel) { return "(NULL channel)" }
+    return channel.name + '(' + channel.id + ')';
+}
+
+function guildToLogFormat(guild) {
+    if (!guild) { return "(NULL guild)" }
+    return guild.name + '(' + guild.id + ')';
+}
+//#endregion
+//#region   //! Game Logging
+function gameLog(game, action, content) {
+    let logMessage = getTimeStamp() + ' => ' + action + ': ' + content;
+    switch (game.type) {
+        case 'Chinese Chess':
+            fs.appendFile("./appdata/log/games/Chinese Chess/" + getTimeStampYMD() + " " + game.whiteMember.id + " vs " + game.blackMember.id + ".txt ", logMessage + '\n', function(err) { if (err) throw err; });
+            break;
+        default:
+            return;
+    }
 }
 //#endregion
 //#endregion

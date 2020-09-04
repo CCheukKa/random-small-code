@@ -77,8 +77,8 @@ function intervalPerMinute() {
                 }
                 if (member.voiceIdleTime == 0) {
                     member.voice.kick('Auto-kicked for idling for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes');
-                    member.send('You are auto-kicked from the voice channel **__' + channel.name + '__** in **__' + guild.name + '__** for idling alone for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes.').catch(error => { console.error(error) });
-                    generateLog('Kicked', member.user.username + '(' + member.id + ') from ' + channel.name + '(' + channel.id + ') in ' + guild.name + '(' + guild.id + ')');
+                    member.send('You are auto-kicked from the voice channel **__' + channel.name + '__** in **__' + guild.name + '__** for idling alone for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes.').catch(error => {});
+                    generateLog('Kicked', memberToLogFormat(member) + ' from ' + channelToLogFormat(channel) + ' in ' + guildToLogFormat(guild));
                     member.voiceIdleTime = -1;
                 }
             });
@@ -86,10 +86,10 @@ function intervalPerMinute() {
     });
 }
 //#endregion
-//#region   //! Miscellaneous
+//#region   //! Meta
 function getTimeStamp() {
     let d = new Date();
-    return d.getDate() + '/' + d.getMonth() + 1 + '/' + d.getFullYear() + ', ' + d.toLocaleTimeString();
+    return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ', ' + d.toLocaleTimeString();
 }
 
 function generateLog(action, content) {
@@ -97,6 +97,18 @@ function generateLog(action, content) {
     console.log(logMessage);
     fs.appendFile('./appdata/log.txt', logMessage + '\n', function(err) { if (err) throw err; })
     return;
+}
+
+function memberToLogFormat(member) {
+    return member.user.username + '(' + member.user.id + ')';
+}
+
+function channelToLogFormat(channel) {
+    return channel.name + '(' + channel.id + ')';
+}
+
+function guildToLogFormat(guild) {
+    return guild.name + '(' + guild.id + ')';
 }
 //#endregion
 //#endregion

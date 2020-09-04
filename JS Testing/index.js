@@ -1,7 +1,5 @@
-let a = [1, 2, -6, 7, 4, -33];
-
-console.log('x = ' + simultaneousEquation(a[0], a[1], a[2], a[3], a[4], a[5])[0] + '\ny = ' + simultaneousEquation(a[0], a[1], a[2], a[3], a[4], a[5])[1]);
-return;
+let d = new Date();
+console.log(d.getFullYear() + '-' + (d.getMonth() + 101).toString().substring(1) + '-' + (d.getDate() + 100).toString().substring(1) + ' ' + d.toLocaleTimeString().replace(":", "-").replace(":", "-"));
 
 
 
