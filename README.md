@@ -8,6 +8,7 @@
  Don't expect too much, or rather anything at all.  
 
 # instruction
+ Read the README in the corresponding project files for project-specific instructions! Refer to this only if there is no README.
  Ignore my bad coding habits.  
  For the HTML projects, use compiled.html if possible, page.html if not.  
  I use NodeJS to execute my code just for the sake of convenience, I don't use external libraries anyway so any compiler should work.  

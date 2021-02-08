@@ -13,7 +13,7 @@
                 "noMention": "you need to @ someone to invite them to a game.",
                 "self": "unless you have schizophrenia, I don't believe one can play against themselves; but if you do, then you should have no trouble operating two accounts simutaneously.",
                 "bot": "as much as I would like to play against you, I don't know how to! :cry:\nConsider inviting someone else and I promise I'll host the game for you!",
-                "botAngry": "I'm still angry.",
+                "botAngry": "I'm still angry. :angry:",
                 "alreadyInvited": ["you have already invited them once.\n", ", it's rude to leave the inviter hanging. Give them an answer: `accept` or `decline`."],
                 "successful": ["you have succesfully invited them!\n", ", you can `accept` or `decline` the invite."]
             },
@@ -33,8 +33,8 @@
             "decline": {
                 "noMention": "you need to @ someone to decline their invite.",
                 "self": "declining yourself? What does that even mean?",
-                "bot": "hey I didn't even invite you! You know what? I don't even want to play against you anyway.",
-                "botAngry": "get lost.",
+                "bot": "hey I didn't even invite you! You know what? I don't even want to play against you anyway. :angry:",
+                "botAngry": "get lost. :rage:",
                 "noInvite": "damn. Declining people before they even send you an invite is a strong move. Do you have a bone to pick with them?",
                 "successful": ["you have declined the invite.\n", ", everybody has their reasons. No hate?"],
                 "error": {
@@ -43,11 +43,16 @@
             }
         },
         "apology": {
-            "forgiveChance": 0.6,
+            "forgiveChance": 0.7,
             "accept": "alright I accept your apology this time, but don't do that again.",
             "notAccept": "you made me angry. You have to try harder than that to get my forgiveness",
+            "hug": {
+                "accept": "alright I will take that as an apology, but don't make me angry again.",
+                "notAccept": "I am still angry. Get off me. :angry:"
+            },
             "notAngry": "I'm not angry at you. Why are you apologising?"
-        }
+        },
+        "hug": "hug you right back! :wink:"
     },
     "canvas": {
         "tileSize": 160,

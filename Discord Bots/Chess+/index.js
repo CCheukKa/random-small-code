@@ -131,6 +131,23 @@ bot.on("message", (message) => {
         case 'decline':
             message.reply(declineInivte(message.guild, message.member, message.guild.member(message.mentions.users.first())));
             break;
+        case 'hug':
+            if (message.mentions.users.first() == bot.user) {
+                if (!message.member.botIsAngryAt) {
+                    message.reply(botConfig.flavourText.hug);
+                    return;
+                }
+                if (Math.random() < botConfig.flavourText.apology.forgiveChance) { //accept apology
+                    message.reply(botConfig.flavourText.apology.hug.accept);
+                    message.member.botIsAngryAt = false;
+                    return;
+                } else { //not accept apology
+                    message.reply(botConfig.flavourText.apology.hug.notAccept);
+                    return;
+                }
+            }
+            break;
+        case 'sorry':
         case 'apologise':
         case 'apologize':
             if (message.mentions.users.first() == bot.user) {
@@ -221,9 +238,7 @@ bot.on("message", (message) => {
             updateParameters();
             message.reply("updated parameters");
             break;
-        case 'test':
-            message.reply('test ' + message.member.toString());
-            break;
+
         case "reset":
             board = JSON.parse(JSON.stringify(boardInit));
             lastMove = [];
@@ -251,6 +266,7 @@ bot.on("message", (message) => {
             sendBoard(message.channel);
             message.reply("board state enforced");
             break;
+
         default:
             break;
     }

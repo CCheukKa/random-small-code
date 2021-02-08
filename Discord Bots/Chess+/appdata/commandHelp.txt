@@ -2,8 +2,6 @@ Here is my list of commands: (Prefix: `! / . ,`)
 **General:**
 > `help`: This
 > `adminHelp`: A list of admin commands (To be implemented)
-> `channelID`: See the channel's ID
-> `myID`: See your user ID
 **Board:** (Append `@<someone>` to access their board data)
 > `board`: See the current board state of your game
 > `material`: Shows the material evaluation of the current board position

@@ -1,11 +1,29 @@
-let d = new Date();
-console.log(d.getFullYear() + '-' + (d.getMonth() + 101).toString().substring(1) + '-' + (d.getDate() + 100).toString().substring(1) + ' ' + d.toLocaleTimeString().replace(":", "-").replace(":", "-"));
-
+console.log(reverse(123456));
 
 
 
 
 //================================================================
+function test(n) {
+    var count = 1;
+    var string = "";
+    for (let i = 1; i <= n; i++) {
+        for (let j = 0; j < i; j++) {
+            string += count + " ";
+            count++;
+        }
+        string += "\n";
+    }
+    for (let i = n - 1; i > 0; i--) {
+        for (let j = 0; j < i; j++) {
+            string += count + " ";
+            count++;
+        }
+        string += "\n";
+    }
+    return string;
+}
+
 function simultaneousEquation(a, b, c, d, e, f) {
     // aX + bY + c = 0      dX + eY + f = 0
     let x = -(b * -f + c * e) / (a * e - b * d);

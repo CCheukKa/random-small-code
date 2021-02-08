@@ -11,8 +11,11 @@ const skyColour = '#2a9fdb';
 const groundColour = '#91d676';
 const timeStepMS = 1;
 
+const debug = true;
+const debugTextSize = 40;
+
 //class initialisation
-class Camera{
+class Camera {
     constructor(x, y, z, xRot, yRot, zRot, horizontalFOV = 100) {
         this.x = x; //horizontal
         this.y = y; //fowards
@@ -26,7 +29,7 @@ class Camera{
         console.log(this);
     }
 }
-class Cube{
+class Cube {
     constructor(x, y, z, sideLength = 10, zRot = 0) {
         this.x = x;
         this.y = y;
@@ -41,21 +44,25 @@ class Cube{
 
 //object initialisation
 var cam = new Camera(0, 0, 10, 0, 0, 0, 100);
-new Cube(0, 20, 10, 20);
+var objectList = [];
+objectList.push(new Cube(0, 20, 10, 20));
 //
 
-document.addEventListener('keydown', function (e) {
+document.addEventListener('keydown', function(e) {
     keyDown(e.key);
 });
 
-setInterval(function () {
+setInterval(function() {
     render();
 }, timeStepMS);
 
 //===================================================================
 function render() {
     drawBG();
-    drawGround();
+
+    if (debug) {
+        drawDebug();
+    }
     return;
 }
 
@@ -96,6 +103,20 @@ function drawBG() { //sky + ground
     return;
 }
 
+function drawDebug() { //debug text
+    let args = ['x: ' + cam.x, 'y: ' + cam.y, 'z: ' + cam.z, 'x-rot: ' + Math.round(rad2deg(cam.xRot)), 'y-rot: ' + Math.round(rad2deg(cam.yRot)), 'z-rot: ' + Math.round(rad2deg(cam.zRot))];
+    drawDebugBuffer(args);
+    return;
+}
+
+function drawDebugBuffer(args) {
+    let count = 1;
+    args.forEach(element => {
+        drawText(element, 10, (debugTextSize / 2 + 20) * count, 1, 'black', 'white', debugTextSize, 'bold');
+        count++;
+    });
+}
+
 
 
 
@@ -105,32 +126,35 @@ function drawBG() { //sky + ground
 //===================================================================
 function keyDown(key) {
     switch (key) {
-        case 'ArrowUp': {
-            cam.xRot -= deg2rad(1);
-            cam.xRot = clamp(cam.xRot, -Math.PI, Math.PI);
-            break;
-        }
-        case 'ArrowDown': {
-            cam.xRot += deg2rad(1);
-            cam.xRot = clamp(cam.xRot, -Math.PI, Math.PI);
-            break;
-        }
+        case 'ArrowUp':
+            {
+                cam.xRot -= deg2rad(1);
+                cam.xRot = clamp(cam.xRot, -Math.PI, Math.PI);
+                break;
+            }
+        case 'ArrowDown':
+            {
+                cam.xRot += deg2rad(1);
+                cam.xRot = clamp(cam.xRot, -Math.PI, Math.PI);
+                break;
+            }
 
-        default: {
-            break;
-        }
+        default:
+            {
+                break;
+            }
     }
-    
+
     return;
 }
 
-
 //===================================================================
- function drawRect(x1, y1, x2, y2, colour) {
+function drawRect(x1, y1, x2, y2, colour) {
     c.fillStyle = colour;
     c.fillRect(x1, y1, x2 - x1, y2 - y1);
     return;
 }
+
 function drawLine(x1, y1, x2, y2, colour) {
     c.beginPath();
     c.moveTo(x1, y1);
@@ -140,6 +164,7 @@ function drawLine(x1, y1, x2, y2, colour) {
     c.stroke();
     return;
 }
+
 function drawCircle(x, y, r, sA, eA, colour) {
     c.beginPath();
     c.arc(x, y, r, deg2rad(sA), deg2rad(eA));
@@ -148,18 +173,57 @@ function drawCircle(x, y, r, sA, eA, colour) {
     c.fill();
     return;
 }
+
+function drawText(text, x, y, alignment = 0, colour = 'black', strokeColour, textSize = 20, textPrefix) {
+    c.font = textPrefix + ' ' + textSize + 'px Arial';
+
+    switch (alignment) {
+        case 0:
+            c.textAlign = 'center';
+            break;
+        case 1:
+            c.textAlign = 'left';
+            break;
+        case 2:
+            c.textAlign = 'right';
+            break;
+
+        default:
+            break;
+    }
+
+    c.fillStyle = colour;
+    c.fillText(text, x, y + 5);
+
+    if (strokeColour) {
+        c.font = textPrefix + ' ' + textSize + 'px Arial';
+        c.strokeStyle = strokeColour;
+        c.strokeText(text, x, y + 5);
+    }
+
+    return;
+}
+
 function deg2rad(deg) {
     return deg / 180 * Math.PI;
 }
+
 function rad2deg(rad) {
     return rad / Math.PI * 180;
 }
+
 function sin(angle) { return Math.sin(angle); }
+
 function cos(angle) { return Math.cos(angle); }
+
 function tan(angle) { return Math.tan(angle); }
+
 function asin(angle) { return Math.asin(angle); }
+
 function acos(angle) { return Math.acos(angle); }
+
 function atan(angle) { return Math.atan(angle); }
+
 function clamp(x, limit1, limit2) {
     if (limit1 > limit2) { return clamp(x, limit2, limit1); }
     if (x < limit1) { return limit1; }

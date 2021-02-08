@@ -34,7 +34,7 @@ var heldPiece = -1;
 var alreadyHeld = false;
 var stat = [0, 0, 0, 0, 0, 0, 0];
 //
-class Tetromino{
+class Tetromino {
     constructor(type, x, y) {
         if (!isWithinInclusiveRange(type, 0, 6)) {
             delete this;
@@ -50,7 +50,7 @@ class Tetromino{
         initialiseChildren(this);
     }
 }
-class Block{
+class Block {
     constructor(id, parent) {
         this.id = id;
         this.parent = parent;
@@ -58,7 +58,9 @@ class Block{
     }
 }
 //
-var tile = [[]];
+var tile = [
+    []
+];
 for (let y = 0; y < yCount + 1; y++) {
     tile[y] = [];
     for (let x = 0; x < xCount; x++) {
@@ -67,10 +69,10 @@ for (let y = 0; y < yCount + 1; y++) {
 }
 //
 disableScroll();
-document.addEventListener('keydown', function (e) { keyDown(e.code) });
+document.addEventListener('keydown', function(e) { keyDown(e.code) });
 spawnTetromino();
 render();
-setInterval(function () {
+setInterval(function() {
     if (cycleCount >= timeStepMS) {
         cycleCount = 0;
         if (!skipDropThisFrame) {
@@ -110,9 +112,10 @@ function spawnTetromino(type) {
         case 5:
         case 6:
             currentTetromino = new Tetromino(randomType, Math.floor((xCount - 1) / 2), yCount - 2);
-            break;                                        
+            break;
     }
 }
+
 function moveVertical(parent) {
     skipDropThisFrame = true;
     let blocked = false;
@@ -141,156 +144,165 @@ function moveVertical(parent) {
     render();
     return;
 }
+
 function initialiseChildren(parent) {
     parent.children.forEach(child => {
         switch (parent.type) {
-            case 0: { //line
-                child.y = parent.y + 0.5;
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x - 1.5;
-                        break;
-                    case 1:
-                        child.x = parent.x - 0.5;
-                        break;
-                    case 2:
-                        child.x = parent.x + 0.5;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1.5;
-                        break;
+            case 0:
+                { //line
+                    child.y = parent.y + 0.5;
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x - 1.5;
+                            break;
+                        case 1:
+                            child.x = parent.x - 0.5;
+                            break;
+                        case 2:
+                            child.x = parent.x + 0.5;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1.5;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 1: { //square
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x - 0.5;
-                        child.y = parent.y - 0.5;
-                        break;
-                    case 1:
-                        child.x = parent.x - 0.5;
-                        child.y = parent.y + 0.5;
-                        break;
-                    case 2:
-                        child.x = parent.x + 0.5;
-                        child.y = parent.y - 0.5;
-                        break;
-                    case 3:
-                        child.x = parent.x + 0.5;
-                        child.y = parent.y + 0.5;
-                        break;
+            case 1:
+                { //square
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x - 0.5;
+                            child.y = parent.y - 0.5;
+                            break;
+                        case 1:
+                            child.x = parent.x - 0.5;
+                            child.y = parent.y + 0.5;
+                            break;
+                        case 2:
+                            child.x = parent.x + 0.5;
+                            child.y = parent.y - 0.5;
+                            break;
+                        case 3:
+                            child.x = parent.x + 0.5;
+                            child.y = parent.y + 0.5;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 2: { //S-block
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x - 1;
-                        child.y = parent.y;
-                        break;
-                    case 1:
-                        child.x = parent.x;
-                        child.y = parent.y;
-                        break;
-                    case 2:
-                        child.x = parent.x;
-                        child.y = parent.y + 1;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1;
-                        child.y = parent.y + 1;
-                        break;
+            case 2:
+                { //S-block
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x - 1;
+                            child.y = parent.y;
+                            break;
+                        case 1:
+                            child.x = parent.x;
+                            child.y = parent.y;
+                            break;
+                        case 2:
+                            child.x = parent.x;
+                            child.y = parent.y + 1;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1;
+                            child.y = parent.y + 1;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 3: { //L-block
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x + 1;
-                        child.y = parent.y + 1;
-                        break;
-                    case 1:
-                        child.x = parent.x - 1;
-                        child.y = parent.y;
-                        break;
-                    case 2:
-                        child.x = parent.x;
-                        child.y = parent.y;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1;
-                        child.y = parent.y;
-                        break;
+            case 3:
+                { //L-block
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x + 1;
+                            child.y = parent.y + 1;
+                            break;
+                        case 1:
+                            child.x = parent.x - 1;
+                            child.y = parent.y;
+                            break;
+                        case 2:
+                            child.x = parent.x;
+                            child.y = parent.y;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1;
+                            child.y = parent.y;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 4: { //S-reverse
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x - 1;
-                        child.y = parent.y + 1;
-                        break;
-                    case 1:
-                        child.x = parent.x;
-                        child.y = parent.y + 1;
-                        break;
-                    case 2:
-                        child.x = parent.x;
-                        child.y = parent.y;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1;
-                        child.y = parent.y;
-                        break;
+            case 4:
+                { //S-reverse
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x - 1;
+                            child.y = parent.y + 1;
+                            break;
+                        case 1:
+                            child.x = parent.x;
+                            child.y = parent.y + 1;
+                            break;
+                        case 2:
+                            child.x = parent.x;
+                            child.y = parent.y;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1;
+                            child.y = parent.y;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 5: { //L-reverse
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x - 1;
-                        child.y = parent.y + 1;
-                        break;
-                    case 1:
-                        child.x = parent.x - 1;
-                        child.y = parent.y;
-                        break;
-                    case 2:
-                        child.x = parent.x;
-                        child.y = parent.y;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1;
-                        child.y = parent.y;
-                        break;
+            case 5:
+                { //L-reverse
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x - 1;
+                            child.y = parent.y + 1;
+                            break;
+                        case 1:
+                            child.x = parent.x - 1;
+                            child.y = parent.y;
+                            break;
+                        case 2:
+                            child.x = parent.x;
+                            child.y = parent.y;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1;
+                            child.y = parent.y;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 6: { //T-block
-                switch (child.id) {
-                    case 0:
-                        child.x = parent.x;
-                        child.y = parent.y + 1;
-                        break;
-                    case 1:
-                        child.x = parent.x - 1;
-                        child.y = parent.y;
-                        break;
-                    case 2:
-                        child.x = parent.x;
-                        child.y = parent.y;
-                        break;
-                    case 3:
-                        child.x = parent.x + 1;
-                        child.y = parent.y;
-                        break;
+            case 6:
+                { //T-block
+                    switch (child.id) {
+                        case 0:
+                            child.x = parent.x;
+                            child.y = parent.y + 1;
+                            break;
+                        case 1:
+                            child.x = parent.x - 1;
+                            child.y = parent.y;
+                            break;
+                        case 2:
+                            child.x = parent.x;
+                            child.y = parent.y;
+                            break;
+                        case 3:
+                            child.x = parent.x + 1;
+                            child.y = parent.y;
+                            break;
+                    }
+                    break;
                 }
-                break;
-            }
         }
     });
 }
+
 function moveHorizontal(direction, parent) {
     let abort = false;
     parent.children.forEach(child => {
@@ -312,6 +324,7 @@ function moveHorizontal(direction, parent) {
     render();
     return;
 }
+
 function rotate(direction, parent) {
     let abort = false;
     parent.children.forEach(child => {
@@ -332,6 +345,7 @@ function rotate(direction, parent) {
     render();
     return;
 }
+
 function placeBlock(parent) {
     parent.children.forEach(block => {
         tile[block.y][block.x] = block.parent.type + 1;
@@ -344,6 +358,7 @@ function placeBlock(parent) {
     deathCheck();
     return;
 }
+
 function hardDrop(parent) {
     while (!blockPlaced) {
         noRender = true;
@@ -354,7 +369,8 @@ function hardDrop(parent) {
     skipDropThisFrame = false;
     return;
 }
-function lineClear() { 
+
+function lineClear() {
     let linesCleared = 0;
     for (let y = 0; y < yCount; y++) {
         let abort = false;
@@ -383,6 +399,7 @@ function lineClear() {
     }
     return;
 }
+
 function deathCheck() {
     let isDead = false;
     for (let x = 0; x < xCount; x++) {
@@ -398,6 +415,7 @@ function deathCheck() {
     }
     return;
 }
+
 function holdPiece() {
     if (alreadyHeld) {
         return;
@@ -433,7 +451,7 @@ function keyDown(key) {
             break;
         case 'ArrowDown':
             moveVertical(currentTetromino);
-            break;          
+            break;
         case 'Space':
             hardDrop(currentTetromino);
             break;
@@ -449,6 +467,7 @@ function keyDown(key) {
     }
     return;
 }
+
 function disableScroll() {
     document.body.style.overflow = 'hidden';
     document.querySelector('html').scrollTop = window.scrollY;
@@ -467,12 +486,14 @@ function render() {
     drawHeldPiece();
     return;
 }
+
 function drawCurrentPiece() {
     currentTetromino.children.forEach(block => {
         drawRect(block.x * tileSize, height - (block.y + 1) * tileSize, tileSize, tileSize, blockPalette[currentTetromino.type]);
     });
     return;
 }
+
 function drawBoard() {
     drawRect(0, 0, width, height, palette[1]);
     for (let x = 0; x < xCount; x++) {
@@ -484,6 +505,7 @@ function drawBoard() {
     }
     return;
 }
+
 function drawGrid() {
     for (let x = 0; x < xCount; x++) {
         drawLine(x * tileSize, 0, x * tileSize, height, palette[0]);
@@ -493,6 +515,7 @@ function drawGrid() {
     }
     return;
 }
+
 function drawGhost() {
     var xGhost = [];
     var yGhost = [];
@@ -518,10 +541,11 @@ function drawGhost() {
             }
         }
     }
-    for (let i = 0; i < 4; i++) { 
+    for (let i = 0; i < 4; i++) {
         drawRect(xGhost[i] * tileSize, height - (yGhost[i] + 1) * tileSize, tileSize, tileSize, palette[2]);
     }
 }
+
 function drawHeldPiece() {
     //drawBoard
     drawRectHeld(0, 0, 4 * tileSize, 4 * tileSize, palette[1]);
@@ -577,11 +601,13 @@ function drawRect(x1, y1, dx, dy, colour) {
     c.fillRect(x1, y1, dx, dy);
     return;
 }
+
 function drawRectHeld(x1, y1, dx, dy, colour) {
     heldC.fillStyle = colour;
     heldC.fillRect(x1, y1, dx, dy);
     return;
 }
+
 function drawLine(x1, y1, x2, y2, colour) {
     c.beginPath();
     c.moveTo(x1, y1);
@@ -591,6 +617,7 @@ function drawLine(x1, y1, x2, y2, colour) {
     c.stroke();
     return;
 }
+
 function drawLineHeld(x1, y1, x2, y2, colour) {
     heldC.beginPath();
     heldC.moveTo(x1, y1);
@@ -600,6 +627,7 @@ function drawLineHeld(x1, y1, x2, y2, colour) {
     heldC.stroke();
     return;
 }
+
 function drawText(text, x, y, alignment, colour, strokeColour) {
     c.font = '100px Trebuchet MS';
 
@@ -616,7 +644,7 @@ function drawText(text, x, y, alignment, colour, strokeColour) {
         case 'right':
             c.textAlign = 'right';
             break;
-    
+
         default:
             break;
     }
@@ -639,10 +667,12 @@ function clamp(x, limit1, limit2) {
     if (x > limit2) { return limit2; }
     return x;
 }
+
 function isWithinInclusiveRange(test, lower, upper) {
     if (lower > upper) { return isWithinInclusiveRange(test, upper, lower) }
     return (lower <= test && test <= upper);
 }
+
 function isWithinExclusiveRange(test, lower, upper) {
     if (lower > upper) { return isWithinExclusiveRange(test, upper, lower) }
     return (lower < test && test < upper);

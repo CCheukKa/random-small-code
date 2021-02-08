@@ -4,6 +4,7 @@ const discord = require("discord.js");
 const { setInterval } = require("timers");
 var intervalFunction, botConfig;
 generateLog('Initialised', '--------------------');
+var prefixList;
 updateParameters();
 //#endregion
 //#region	//! Discord
@@ -17,12 +18,37 @@ bot.on("ready", () => {
 //#endregion
 
 bot.on("message", (message) => {
-    if (!botConfig.admin.idList.includes(message.author.id)) { return; }
     if (!botConfig.discord.commandPrefix.includes(message.content.substring(0, 1))) { return; }
     let args = message.content.substring(1).split(' ');
-    switch (args[0].toLowerCase()) {
+    args[0] = args[0].toLowerCase();
+
+    switch (args[0]) { //! General commands
+        case 'help':
+            message.reply("here are my commands:\n(Prefix: " + prefixList + ")\n allan please add details");
+            break;
+        case 'myid':
+            message.reply("your user ID is:\n" + message.member.id);
+            break;
+        case 'channelid':
+            message.reply("the ID for this channel is:\n" + message.channel.id);
+            break;
+        case 'guildid':
+        case 'serverid':
+            message.reply("the ID for this guild is:\n" + message.guild.id);
+            break;
+        default:
+            break;
+    }
+    if (!botConfig.admin.idList.includes(message.author.id)) { return; }
+    switch (args[0]) { //! Admin commands
         case 'updateparameters':
             updateParameters();
+            message.reply("updated parameters");
+            break;
+        case "cls":
+            message.channel.bulkDelete(99).catch();
+            break;
+        default:
             break;
     }
 });
@@ -31,7 +57,6 @@ bot.on("voiceStateUpdate", (oldMember, newMember) => {
     let oldChannel = oldMember.channel;
     let newChannel = newMember.channel;
     let isExitEvent = !newMember.member.voice.channel;
-
     if (isExitEvent) { //leave
         newMember.member.voiceIdleTime = -1;
         if (oldChannel.members.size == 1) {
@@ -62,6 +87,10 @@ function updateParameters() {
     intervalFunction = setInterval(() => {
         intervalPerMinute();
     }, 60000); //ANCHOR
+    prefixList = '';
+    botConfig.discord.commandPrefix.forEach(prefix => {
+        prefixList += '`' + prefix + '` ';
+    });
     generateLog('Updated', 'Parameters');
     return;
 }
