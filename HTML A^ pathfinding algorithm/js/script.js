@@ -43,7 +43,7 @@ const palette = [
 const gridlineColour = '#404040';
 const triangleOffest = Math.SQRT1_2;
 //
-const timeStepMS = 1;
+const timeStepMS = 10;
 const maxOutOfRangeCycle = 400;
 const mouseThreshold = 0.1;
 //
@@ -66,6 +66,7 @@ var button;
 var allBreak = false;
 var enableHome = true;
 var enableGoal = true;
+var pathfindErrorAlgorithm = -1;
 //
 document.addEventListener('keydown', function(e) { keyDown(e.code) });
 document.addEventListener('keyup', function(e) { keyUp(e.code) });
@@ -109,36 +110,79 @@ class AStarPather {
 
 //#region   //! Maze generation classes
 class DFSExtender {
-    constructor(x, y, parent) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.parent = parent;
         this.extended = [
             false, //right
             false, //down
             false, //left
             false, //up
         ];
-        if (x < xCount - 3) { //right
-            this.extended[0] = tileList[y][x + 2] == 0;
-        }
-        if (y < yCount - 3) { //down
-            this.extended[1] = tileList[y + 2][x] == 0;
-        }
-        if (x > 2) { //left
-            this.extended[2] = tileList[y][x - 2] == 0;
-        }
-        if (y > 2) { //up
-            this.extended[3] = tileList[y - 2][x] == 0;
-        }
-        //this.extend();
+        this.extend();
     }
 
     extend() {
+        this.extendedTest();
         while (!(this.extended[0] && this.extended[1] && this.extended[2] && this.extended[3])) {
-
+            this.extendedTest();
+            let tempArray = [];
+            if (!this.extended[0]) { tempArray.push(0); }
+            if (!this.extended[1]) { tempArray.push(1); }
+            if (!this.extended[2]) { tempArray.push(2); }
+            if (!this.extended[3]) { tempArray.push(3); }
+            switch (tempArray[Math.floor(Math.random() * tempArray.length)]) {
+                case 0: //right
+                    this.extended[0] = true;
+                    tileList[this.y][this.x + 1] = 0;
+                    tileList[this.y][this.x + 2] = 0;
+                    new DFSExtender(this.x + 2, this.y);
+                    break;
+                case 1: //down
+                    this.extended[1] = true;
+                    tileList[this.y + 1][this.x] = 0;
+                    tileList[this.y + 2][this.x] = 0;
+                    new DFSExtender(this.x, this.y + 2);
+                    break;
+                case 2: //left
+                    this.extended[2] = true;
+                    tileList[this.y][this.x - 1] = 0;
+                    tileList[this.y][this.x - 2] = 0;
+                    new DFSExtender(this.x - 2, this.y);
+                    break;
+                case 3: //up
+                    this.extended[3] = true;
+                    tileList[this.y - 1][this.x] = 0;
+                    tileList[this.y - 2][this.x] = 0;
+                    new DFSExtender(this.x, this.y - 2);
+                    break;
+                default:
+                    console.log(`DFS error: ${tempArray}\nat (${this.x}, ${this.y})`);
+                    alert('An error occured during DFS maze generation. See console log.');
+                    return;
+            }
+            this.extendedTest();
         }
         // all extended
+        delete this;
+        return;
+    }
+
+    extendedTest() {
+        this.extended = [true, true, true, true];
+        if (this.x < xCount - 3) { //right
+            this.extended[0] = tileList[this.y][this.x + 2] == 0;
+        }
+        if (this.y < yCount - 3) { //down
+            this.extended[1] = tileList[this.y + 2][this.x] == 0;
+        }
+        if (this.x > 2) { //left
+            this.extended[2] = tileList[this.y][this.x - 2] == 0;
+        }
+        if (this.y > 2) { //up
+            this.extended[3] = tileList[this.y - 2][this.x] == 0;
+        }
+        return;
     }
 }
 //#endregion
@@ -757,7 +801,9 @@ function mazegenDepthFirstSearch() {
     let sX = Math.floor(Math.random() * (xCount - 1) / 2) * 2 + 1,
         sY = Math.floor(Math.random() * (yCount - 1) / 2) * 2 + 1;
     tileList[sY][sX] = 0;
-    new DFSExtender(sX, sY, null);
+    new DFSExtender(sX, sY);
+
+    return true;
 
 }
 //#endregion
@@ -771,19 +817,14 @@ function pathfinding(algorithmType) {
         case '0':
             pathfindAStar();
             break;
-        case '1':
-            pathfindDijkstar();
-            break;
-        case '2':
-            pathfindDepthFirstSearch();
-            break;
-        case '3':
-            pathfindBreadthFirstSearch();
-            break;
         default:
+            if (algorithmType == pathfindErrorAlgorithm) { return; }
+            pathfindErrorAlgorithm = algorithmType;
             console.log(`Unknown/Unimplemented pathfinding algorithm: ${algorithmType}`);
-            break;
+            alert(`Unknown/Unimplemented pathfinding algorithm: ${algorithmType}`);
+            return;
     }
+    pathfindErrorAlgorithm = -1;
     return;
 }
 
