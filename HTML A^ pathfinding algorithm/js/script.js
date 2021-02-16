@@ -1,4 +1,4 @@
-//#region   //? Initialisation
+//#region //? Initialisation
 const canvas = document.getElementById("myCanvas");
 const c = canvas.getContext("2d");
 var canvasBound = canvas.getBoundingClientRect();
@@ -76,7 +76,7 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 canvas.addEventListener('mousemove', function(e) { getMousePos(e) });
 //#endregion
 
-//#region   //! Pathfinding classes
+//#region //! Pathfinding classes
 class AStarPather {
     constructor(x, y, fromX, fromY, gCost) {
         //console.log(`Constructing ${x}, ${y}`);
@@ -108,7 +108,7 @@ class AStarPather {
 }
 //#endregion
 
-//#region   //! Maze generation classes
+//#region //! Maze generation classes
 class DFSExtender {
     constructor(x, y) {
         this.x = x;
@@ -187,14 +187,16 @@ class DFSExtender {
 }
 //#endregion
 
-//#region   //? Timed functions
+//#region //? Timed functions
+var updateQueued = false;
 updateCanvasParameters();
 setInterval(function() {
     updateCanvasParameters();
     if (held) {
         paint(Math.floor((mX - 10) / tileSize), Math.floor((mY - 10) / tileSize));
     }
-    update();
+    if (updateQueued) { update(); }
+    updateQueued = false;
 }, timeStepMS);
 
 function update() {
@@ -205,7 +207,7 @@ function update() {
 }
 //#endregion
 
-//#region   //! Canvas handler
+//#region //! Canvas handler
 function updateCanvasParameters() {
     //
     xCount = clamp(xCount, 2, Infinity);
@@ -258,6 +260,7 @@ function paint(sX, sY) {
     if (checkboxGrid.checked && (((mX - 10) % tileSize) / tileSize > 1 - mouseThreshold | ((mX - 10) % tileSize) / tileSize < mouseThreshold | ((mY - 10) % tileSize) / tileSize > 1 - mouseThreshold | ((mY - 10) % tileSize) / tileSize < mouseThreshold)) {
         return;
     }
+    updateQueued = true;
     switch (button) {
         case 0:
             if (modifierHeld) {
@@ -283,7 +286,7 @@ function paint(sX, sY) {
 }
 //#endregion
 
-//#region   //! HTML handler
+//#region //! HTML handler
 window.onclick = function(event) {
     if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -304,7 +307,7 @@ function toggleDropdown() {
 
 //#endregion
 
-//#region   //! I/O handler
+//#region //! I/O handler
 function buttonClicked(id) {
     switch (id) {
         case 0:
@@ -343,6 +346,7 @@ function buttonClicked(id) {
         default:
             return;
     }
+    updateQueued = true;
     return;
 }
 
@@ -403,7 +407,7 @@ function disableScroll() {
 }
 //#endregion
 
-//#region   //! Redraw functions
+//#region //! Redraw functions
 function deleteOldPath() {
     for (let y = 0; y < yCount; y++) {
         for (let x = 0; x < xCount; x++) {
@@ -433,6 +437,8 @@ function invertTiles() {
             }
         }
     }
+    updateQueued = true;
+    return;
 }
 
 function fillBoard(tileType) {
@@ -445,6 +451,7 @@ function fillBoard(tileType) {
     for (let i = 0; i < yCount; i++) {
         tileList.push(JSON.parse(tempStringified));
     }
+    updateQueued = true;
     return;
 }
 
@@ -641,7 +648,7 @@ function subfunctionTopRight(x, y, colour) {
 //#endregion
 //#endregion
 
-//#region   //! Custom draw functions
+//#region //! Custom draw functions
 function drawRect(x1, y1, dx, dy, colour) {
     c.fillStyle = colour;
     c.fillRect(x1, y1, dx, dy);
@@ -714,7 +721,7 @@ function drawTileSizeTriangle(x1, y1, x2, y2, x3, y3, colour = palette[0]) {
 }
 //#endregion
 
-//#region   //! Custom math functions
+//#region //! Custom math functions
 function clamp(x, limit1, limit2) {
     if (limit1 > limit2) { return clamp(x, limit2, limit1); }
     if (x < limit1) { return limit1; }
@@ -737,7 +744,7 @@ function deg2rad(n) {
 }
 //#endregion
 
-//#region   //! Maze generation
+//#region //! Maze generation
 function generateMaze(type) {
     let mazeGenSuccess;
     switch (type) {
@@ -746,6 +753,9 @@ function generateMaze(type) {
             break;
         case 1: //DFS
             mazeGenSuccess = mazegenDepthFirstSearch();
+            break;
+        case 2: //Kruskal's
+            mazeGenSuccess = mazegenKruskals();
             break;
         default:
             alert('Unknown/Unimplemented maze type: ' + type);
@@ -756,12 +766,14 @@ function generateMaze(type) {
         return;
     }
     if (!mazeGenSuccess) { return; }
+    //success
+    updateQueued = true;
     enableHome = false;
     enableGoal = false;
     return;
 }
 
-//#region //? Binary tree
+//#region       //? Binary tree
 function mazegenBinaryTree() {
     if (xCount % 2 == 1 | yCount % 2 == 1) {
         alert('This maze generation algorithm requires an [even x even] number of tiles');
@@ -789,8 +801,7 @@ function mazegenBinaryTree() {
 }
 //#endregion
 
-//#region //? Depth first search
-
+//#region       //? Depth first search
 function mazegenDepthFirstSearch() {
     if (xCount * yCount % 2 == 0) {
         alert('This maze generation algorithm requires an [odd x odd] number of tiles');
@@ -808,9 +819,20 @@ function mazegenDepthFirstSearch() {
 }
 //#endregion
 
+//#region       //? Kruskal's
+function mazegenKruskals() {
+    if (xCount * yCount % 2 == 0) {
+        alert('This maze generation algorithm requires an [odd x odd] number of tiles');
+        return false;
+    }
+    fillBoard(1);
+    //ANCHOR //TODO:
+}
 //#endregion
 
-//#region   //! Pathfinding functions
+//#endregion
+
+//#region //! Pathfinding functions
 
 function pathfinding(algorithmType) {
     switch (algorithmType) {
