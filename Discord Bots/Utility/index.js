@@ -36,6 +36,12 @@ bot.on("message", (message) => {
         case 'serverid':
             message.reply("the ID for this guild is:\n" + message.guild.id);
             break;
+        case 'piano':
+            piano(message, message.member);
+            break;
+        case 'unpiano':
+            unpiano(message);
+            break;
         default:
             break;
     }
@@ -79,7 +85,87 @@ bot.on("voiceStateUpdate", (oldMember, newMember) => {
     }
 });
 
-//#region   // Custom functions
+//#region   //! Piano
+function piano(message, member) {
+    if (!message.member.voice.channel) {
+        message.reply(`join a voice channel first!`);
+        return;
+    }
+    generateLog('Piano', `${memberToLogFormat(message.member)} tried to initialise piano`);
+    message.reply(`here's your piano:\nCareful, I may be loud!`).then(msg => {
+        pianoMessage = msg;
+        msg.react('🇦');
+        msg.react('🇧');
+        msg.react('🇨');
+        msg.react('🇩');
+        msg.react('🇪');
+        msg.react('🇫');
+        msg.react('🇬');
+    });
+    try {
+        member.voice.channel.join().then(connection => {
+            pianoConnection = connection;
+            pianoChannel = member.voice.channel;
+            generateLog('Piano', `Attached successfully to ${channelToLogFormat(pianoChannel)} by request of ${memberToLogFormat(member)}`);
+        })
+    } catch { generateLog('Piano', `Failed to attach to ${channelToLogFormat(member.voice.channel)} by request of ${memberToLogFormat(member)}`) };
+    return;
+}
+
+function unpiano(message) {
+    if (!pianoChannel) {
+        pianoChannel.leave();
+    }
+    pianoChannel = null;
+    pianoConnection = null;
+    pianoMessage = null;
+    message.reply('unpianoed');
+    generateLog('Piano', `Detached from ${channelToLogFormat(message.member.voice.channel)}`);
+    return;
+}
+
+bot.on('messageReactionAdd', (reaction, user) => {
+    if (user.id == bot.user.id) { return; }
+    if (!pianoMessage) { return; }
+    if (reaction.message.id != pianoMessage.id) { return; }
+    var note;
+    switch (reaction.emoji.name) {
+        case '🇦':
+            note = 'A';
+            break;
+        case '🇧':
+            note = 'B';
+            break;
+        case '🇨':
+            note = 'C';
+            break;
+        case '🇩':
+            note = 'D';
+            break;
+        case '🇪':
+            note = 'E';
+            break;
+        case '🇫':
+            note = 'F';
+            break;
+        case '🇬':
+            note = 'G';
+            break;
+        default:
+            reaction.users.remove(user.id).catch(console.error('Failed to remove reaction'));
+            return;
+    }
+    reaction.users.remove(user.id).catch();
+    console.log(`${user.username} played ${note}`);
+
+    //Play:
+    const dispatcher = pianoConnection.play(`./appdata/pianoNotes/${note}.wav`);
+    //
+    return;
+});
+//#endregion
+
+//#region   //? Custom functions
 //#region   //! Parameters
 function updateParameters() {
     if (intervalFunction) { clearInterval(intervalFunction); }
@@ -139,6 +225,5 @@ function channelToLogFormat(channel) {
 function guildToLogFormat(guild) {
     return guild.name + '(' + guild.id + ')';
 }
-//#endregion
 //#endregion
 //#endregion
