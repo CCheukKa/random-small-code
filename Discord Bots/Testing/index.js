@@ -37,17 +37,6 @@ bot.on('message', message => {
                     pianoChannel = message.member.voice.channel;
                 }).catch(console.error('Connection failed to attach'));
                 break;
-
-            case 'unpiano':
-                if (!pianoChannel) {
-                    pianoChannel.leave();
-                }
-                pianoChannel = null;
-                pianoConnection = null;
-                pianoMessage = null;
-                message.reply('unpianoed');
-                break;
-
         }
     }
 })
