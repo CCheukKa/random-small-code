@@ -12,8 +12,8 @@ const height = tileSize * yCount;
 canvas.width = width;
 canvas.height = height;
 
-const palette = ['#404040', '#353437', '#3b7182', '#f18a70', '#fae393'];
-//              [gridlines,     board,     snake,     apple]
+const palette = ['#202022', '#2f2f31', '#3b7182', '#f18a70', '#fae393'];
+//              [gridlines,     board,     snake,     apple,       idk]
 const startLength = 3;
 const segmentedSnake = false;
 //
@@ -29,7 +29,7 @@ for (let i = 0; i < yCount; i++) {
     board[i] = [];
     for (let j = 0; j < xCount; j++) {
         board[i].push(0);
-    }  
+    }
 }
 for (let i = 0; i < startLength; i++) {
     board[Math.round(yCount / 2 - 0.5)][i] = i + 1;
@@ -39,14 +39,15 @@ var yHead = Math.round(yCount / 2 - 0.5);
 
 //===================================
 generateApple();
+document.body.style.backgroundColor = palette[0];
 //
 redraw();
 disableScroll();
-document.addEventListener('keydown', function (e) {
+document.addEventListener('keydown', function(e) {
     keyDown(e.code);
 });
 //
-setInterval(function () {
+setInterval(function() {
     move();
     redraw();
     alreadyTurnedThisFrame = false;
@@ -107,6 +108,7 @@ function move() {
     }
     return;
 }
+
 function generateApple() {
     while (true) {
         xApple = Math.floor(Math.random() * xCount);
@@ -151,11 +153,13 @@ function keyDown(key) {
     alreadyTurnedThisFrame = true;
     return;
 }
+
 function disableScroll() {
     document.body.style.overflow = 'hidden';
     document.querySelector('html').scrollTop = window.scrollY;
     return;
 }
+
 function isWithinInclusiveRange(test, lower, upper) {
     if (lower > upper) {
         let dummy = upper;
@@ -164,6 +168,7 @@ function isWithinInclusiveRange(test, lower, upper) {
     }
     return (lower <= test && test <= upper);
 }
+
 function isWithinExclusiveRange(test, lower, upper) {
     if (lower > upper) {
         let dummy = upper;
@@ -174,7 +179,7 @@ function isWithinExclusiveRange(test, lower, upper) {
 }
 //===================================================================
 function redraw() {
-    if (halt) { return;}
+    if (halt) { return; }
     drawBoard();
     drawApple();
     drawSnake();
@@ -182,6 +187,7 @@ function redraw() {
     drawSnakeAdj();
     return;
 }
+
 function drawGrid() {
     for (let x = 1; x < xCount; x++) {
         drawLine(x * tileSize, 0, x * tileSize, height, palette[0]);
@@ -191,14 +197,17 @@ function drawGrid() {
     }
     return;
 }
+
 function drawBoard() {
     drawRect(0, 0, width, height, palette[1]);
     return;
 }
+
 function drawApple() {
     drawRect(xApple * tileSize, yApple * tileSize, tileSize, tileSize, palette[3]);
     return;
 }
+
 function drawSnake() {
     for (let x = 0; x < xCount; x++) {
         for (let y = 0; y < yCount; y++) {
@@ -209,6 +218,7 @@ function drawSnake() {
     }
     return;
 }
+
 function drawSnakeAdj() {
     for (let x = 0; x < xCount; x++) {
         for (let y = 0; y < yCount; y++) {
@@ -237,6 +247,7 @@ function drawRect(x1, y1, dx, dy, colour) {
     c.fillRect(x1, y1, dx, dy);
     return;
 }
+
 function drawLine(x1, y1, x2, y2, colour) {
     c.beginPath();
     c.moveTo(x1, y1);
@@ -246,6 +257,7 @@ function drawLine(x1, y1, x2, y2, colour) {
     c.stroke();
     return;
 }
+
 function drawCircle(x, y, r, sA, eA, colour) {
     c.beginPath();
     c.arc(x, y, r, deg2rad(sA), deg2rad(eA));

@@ -172,8 +172,9 @@
                     <select name="Pathfinding Algorithms" id="pathfindingAlgorithmList">
                             <option value="0" selected>A*</option>
                             <option value="1">Dijkstra</option>
-                            <option value="2">Depth First Search</option>
-                            <option value="3">Breadth First Search</option>
+                            <option value="2">Greedy</option>
+                            <option value="3">Depth First Search</option>
+                            <option value="4">Breadth First Search</option>
                         </select>
                 </th>
                 <th class="separator">|</th>
@@ -211,7 +212,7 @@
 
 
     <script>
-        //#region   //? Initialisation
+        //#region //? Initialisation
         const canvas = document.getElementById("myCanvas");
         const c = canvas.getContext("2d");
         var canvasBound = canvas.getBoundingClientRect();
@@ -319,7 +320,7 @@
         });
         //#endregion
 
-        //#region   //! Pathfinding classes
+        //#region //! Pathfinding classes
         class AStarPather {
             constructor(x, y, fromX, fromY, gCost) {
                 //console.log(`Constructing ${x}, ${y}`);
@@ -351,7 +352,7 @@
         }
         //#endregion
 
-        //#region   //! Maze generation classes
+        //#region //! Maze generation classes
         class DFSExtender {
             constructor(x, y) {
                 this.x = x;
@@ -438,14 +439,18 @@
         }
         //#endregion
 
-        //#region   //? Timed functions
+        //#region //? Timed functions
+        var updateQueued = false;
         updateCanvasParameters();
         setInterval(function() {
             updateCanvasParameters();
             if (held) {
                 paint(Math.floor((mX - 10) / tileSize), Math.floor((mY - 10) / tileSize));
             }
-            update();
+            if (updateQueued) {
+                update();
+            }
+            updateQueued = false;
         }, timeStepMS);
 
         function update() {
@@ -456,7 +461,7 @@
         }
         //#endregion
 
-        //#region   //! Canvas handler
+        //#region //! Canvas handler
         function updateCanvasParameters() {
             //
             xCount = clamp(xCount, 2, Infinity);
@@ -513,6 +518,7 @@
             if (checkboxGrid.checked && (((mX - 10) % tileSize) / tileSize > 1 - mouseThreshold | ((mX - 10) % tileSize) / tileSize < mouseThreshold | ((mY - 10) % tileSize) / tileSize > 1 - mouseThreshold | ((mY - 10) % tileSize) / tileSize < mouseThreshold)) {
                 return;
             }
+            updateQueued = true;
             switch (button) {
                 case 0:
                     if (modifierHeld) {
@@ -538,7 +544,7 @@
         }
         //#endregion
 
-        //#region   //! HTML handler
+        //#region //! HTML handler
         window.onclick = function(event) {
             if (!event.target.matches('.dropbtn')) {
                 var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -559,7 +565,7 @@
 
         //#endregion
 
-        //#region   //! I/O handler
+        //#region //! I/O handler
         function buttonClicked(id) {
             switch (id) {
                 case 0:
@@ -598,6 +604,7 @@
                 default:
                     return;
             }
+            updateQueued = true;
             return;
         }
 
@@ -658,7 +665,7 @@
         }
         //#endregion
 
-        //#region   //! Redraw functions
+        //#region //! Redraw functions
         function deleteOldPath() {
             for (let y = 0; y < yCount; y++) {
                 for (let x = 0; x < xCount; x++) {
@@ -688,6 +695,8 @@
                     }
                 }
             }
+            updateQueued = true;
+            return;
         }
 
         function fillBoard(tileType) {
@@ -700,6 +709,7 @@
             for (let i = 0; i < yCount; i++) {
                 tileList.push(JSON.parse(tempStringified));
             }
+            updateQueued = true;
             return;
         }
 
@@ -920,7 +930,7 @@
         //#endregion
         //#endregion
 
-        //#region   //! Custom draw functions
+        //#region //! Custom draw functions
         function drawRect(x1, y1, dx, dy, colour) {
             c.fillStyle = colour;
             c.fillRect(x1, y1, dx, dy);
@@ -993,7 +1003,7 @@
         }
         //#endregion
 
-        //#region   //! Custom math functions
+        //#region //! Custom math functions
         function clamp(x, limit1, limit2) {
             if (limit1 > limit2) {
                 return clamp(x, limit2, limit1);
@@ -1026,7 +1036,7 @@
         }
         //#endregion
 
-        //#region   //! Maze generation
+        //#region //! Maze generation
         function generateMaze(type) {
             let mazeGenSuccess;
             switch (type) {
@@ -1035,6 +1045,9 @@
                     break;
                 case 1: //DFS
                     mazeGenSuccess = mazegenDepthFirstSearch();
+                    break;
+                case 2: //Kruskal's
+                    mazeGenSuccess = mazegenKruskals();
                     break;
                 default:
                     alert('Unknown/Unimplemented maze type: ' + type);
@@ -1047,12 +1060,14 @@
             if (!mazeGenSuccess) {
                 return;
             }
+            //success
+            updateQueued = true;
             enableHome = false;
             enableGoal = false;
             return;
         }
 
-        //#region //? Binary tree
+        //#region       //? Binary tree
         function mazegenBinaryTree() {
             if (xCount % 2 == 1 | yCount % 2 == 1) {
                 alert('This maze generation algorithm requires an [even x even] number of tiles');
@@ -1080,8 +1095,7 @@
         }
         //#endregion
 
-        //#region //? Depth first search
-
+        //#region       //? Depth first search
         function mazegenDepthFirstSearch() {
             if (xCount * yCount % 2 == 0) {
                 alert('This maze generation algorithm requires an [odd x odd] number of tiles');
@@ -1099,9 +1113,20 @@
         }
         //#endregion
 
+        //#region       //? Kruskal's
+        function mazegenKruskals() {
+            if (xCount * yCount % 2 == 0) {
+                alert('This maze generation algorithm requires an [odd x odd] number of tiles');
+                return false;
+            }
+            fillBoard(1);
+            //ANCHOR //TODO:
+        }
         //#endregion
 
-        //#region   //! Pathfinding functions
+        //#endregion
+
+        //#region //! Pathfinding functions
 
         function pathfinding(algorithmType) {
             switch (algorithmType) {
