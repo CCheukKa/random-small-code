@@ -201,6 +201,12 @@ function intervalPerMinute() {
     });
 }
 //#endregion
+//#region   //* Discord Actions
+function sendMessageByChannelID(channelID, msg) {
+    bot.channels.cache.find(channel => channel.id == channelID).send(msg);
+    return;
+}
+//#endregion
 //#region   //! Meta
 function getTimeStamp() {
     let d = new Date();
