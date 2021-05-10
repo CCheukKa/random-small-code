@@ -32,6 +32,9 @@ bot.on("message", (message) => {
         case 'channelid':
             message.reply("the ID for this channel is:\n" + message.channel.id);
             break;
+        case 'ping':
+            message.reply('pong!');
+            break;
         case 'guildid':
         case 'serverid':
             message.reply("the ID for this guild is:\n" + message.guild.id);
