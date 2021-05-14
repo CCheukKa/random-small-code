@@ -11,36 +11,67 @@ canvas.width = width;
 canvas.height = height;
 
 const palette = ['#3b7182', '#4e8863', '#c8cda1', '#dea863', '#f18a70', '#e97f86', '#bc545b'];
-document.body.style.backgroundColor = '#202022';
+const baseColour = '#202022';
+document.body.style.backgroundColor = baseColour;
 //#endregion
-//#region   //? Class definitions
+//#region   //* Constants
+const drawScale = 0.3;
+const baseHeight = 0.6;
 const defaultLength = 200;
-const defaultThickness = 20;
+const defaultThickness = drawScale * 20;
 const defaultMass = 10;
 const gravity = 0.1;
-const energyLossFactor = 0.001;
-const pendulumList = [];
+const energyLossFactor = 0.000;
+//#endregion
+//#region   //? Class definitions
 class Pendulum {
-    constructor(baseX, baseY, length, mass, angle = 0, colour = palette[randomInteger(palette.length)]) {
+    constructor(parent, baseX, baseY, length, mass, angle = Math.random() * Math.PI) {
+        this.parent = parent;
         this.baseX = baseX;
         this.baseY = baseY;
+        if (parent) {
+            this.baseX = parent.endX;
+            this.baseY = parent.endY;
+        }
         this.length = length;
         this.mass = mass;
         this.angle = angle;
-        this.colour = colour;
+        this.colour = palette[randomInteger(palette.length)]
         this.angularVelocity = 0;
         this.angularMoment = 0;
         this.calcEnd();
-        pendulumList.push(this);
     }
     calcEnd() {
-        this.endX = this.length * cos(this.angle) + this.baseX;
-        this.endY = this.length * sin(this.angle) + this.baseY;
+        this.endX = this.length * drawScale * cos(this.angle) + this.baseX;
+        this.endY = this.length * drawScale * sin(this.angle) + this.baseY;
     }
 }
 //#endregion
 //#region   //! Main loop
-const basePendulum = new Pendulum(width / 2, height - 40, defaultLength, defaultMass, 0);
+const pendulumList = [
+    p01 = new Pendulum(null, width / 2, height * baseHeight, defaultLength, defaultMass),
+    p02 = new Pendulum(p01, null, null, defaultLength, defaultMass),
+    p03 = new Pendulum(p02, null, null, defaultLength, defaultMass),
+    p04 = new Pendulum(p01, null, null, defaultLength, defaultMass),
+    p05 = new Pendulum(p04, null, null, defaultLength, defaultMass),
+    p06 = new Pendulum(p05, null, null, defaultLength, defaultMass),
+    p07 = new Pendulum(p04, null, null, defaultLength, defaultMass),
+    p08 = new Pendulum(p03, null, null, defaultLength, defaultMass),
+    p09 = new Pendulum(p07, null, null, defaultLength, defaultMass),
+    p10 = new Pendulum(p06, null, null, defaultLength, defaultMass),
+    p11 = new Pendulum(p08, null, null, defaultLength, defaultMass),
+    p12 = new Pendulum(p10, null, null, defaultLength, defaultMass),
+    p13 = new Pendulum(p12, null, null, defaultLength, defaultMass),
+    p14 = new Pendulum(p11, null, null, defaultLength, defaultMass),
+    p15 = new Pendulum(p11, null, null, defaultLength, defaultMass),
+    p16 = new Pendulum(p09, null, null, defaultLength, defaultMass),
+    p17 = new Pendulum(p13, null, null, defaultLength, defaultMass),
+    p18 = new Pendulum(p15, null, null, defaultLength, defaultMass),
+    p19 = new Pendulum(p16, null, null, defaultLength, defaultMass),
+    p20 = new Pendulum(p18, null, null, defaultLength, defaultMass),
+    p21 = new Pendulum(p20, null, null, defaultLength, defaultMass),
+
+];
 redraw();
 setInterval(function() {
     physics();
@@ -51,6 +82,10 @@ setInterval(function() {
 //#region   //! Physics
 function physics() {
     pendulumList.forEach(p => {
+        if (p.parent) {
+            p.baseX = p.parent.endX;
+            p.baseY = p.parent.endY;
+        }
 
         p.angularMoment = 0;
         p.angularMoment += p.mass * gravity * cos(p.angle) * p.length / 2;
@@ -69,8 +104,9 @@ function physics() {
 //#region   //! Redraw
 function redraw() {
     c.clearRect(0, 0, width, height);
-    pendulumList.forEach(({ baseX, baseY, endX, endY, colour, thickness }) => {
-        drawLine(baseX, height - baseY, endX, height - endY, colour, thickness);
+    pendulumList.forEach(({ baseX, baseY, endX, endY, colour }) => {
+        drawLine(baseX, height - baseY, endX, height - endY, colour, defaultThickness);
+        drawCircle(baseX, height - baseY, baseColour, defaultThickness * 0.35);
     })
     return;
 }
@@ -93,14 +129,14 @@ function drawLine(x1, y1, x2, y2, colour, thickness = defaultThickness) {
     return;
 }
 
-function drawCircle(x, y, r, sA, eA, colour) {
-    c.beginPath();
-    c.arc(x, y, r, deg2rad(sA), deg2rad(eA));
-    c.fillStyle = colour;
-    c.lineTo(x, y);
-    c.fill();
+function drawCircle(x, y, colour, radius) {
+    drawLine(x, y, x, y, colour, radius * 2);
     return;
 }
+
+function deg2rad(angle) { return angle / 180 * Math.PI; }
+
+function rad2deg(angle) { return angle * 180 / Math.PI; }
 
 function isWithinInclusiveRange(test, lower, upper) {
     if (lower > upper) {
