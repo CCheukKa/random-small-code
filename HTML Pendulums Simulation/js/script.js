@@ -34,7 +34,7 @@ const playSound = false;
 //#endregion
 //#region   //? Class definitions
 class Pendulum {
-    constructor(parent, baseX, baseY, length, mass, angle = Math.random() * Math.PI) {
+    constructor(parent, baseX, baseY, length, mass, angle, isMotor, motorAngularVelocity) {
         this.parent = parent;
         this.baseX = baseX;
         this.baseY = baseY;
@@ -43,11 +43,16 @@ class Pendulum {
             this.baseY = parent.endY;
         }
         this.length = length | defaultLength * (Math.random() * 1.4 + 0.2)
-        this.mass = mass;
-        this.angle = angle;
+        this.mass = mass | defaultMass;
+        this.angle = angle | Math.random() * Math.PI;
         this.colour = palette[randomInteger(palette.length)]
         this.angularVelocity = 0;
         this.angularMoment = 0;
+        this.isMotor = isMotor | false;
+        this.motorAngularVelocity = motorAngularVelocity;
+        if (!motorAngularVelocity) {
+            this.motorAngularVelocity = (Math.random() * 6 + 0.5) * (-1) ** (Math.round(Math.random()));
+        }
         this.calcEnd();
         if (playSound) {
             this.audioController = document.createElement('audio');
@@ -72,28 +77,28 @@ class Pendulum {
 //#region   //! Main loop
 const traceID = 3;
 const pendulumList = [
-    p00 = new Pendulum(null, width / 2, height * baseHeight, null, defaultMass),
-    p01 = new Pendulum(p00, null, null, null, defaultMass),
-    p02 = new Pendulum(p01, null, null, null, defaultMass),
-    p03 = new Pendulum(p02, null, null, null, defaultMass),
-    //p04 = new Pendulum(p01, null, null, null, defaultMass),
-    //p05 = new Pendulum(p04, null, null, null, defaultMass),
-    //p06 = new Pendulum(p05, null, null, null, defaultMass),
-    //p07 = new Pendulum(p04, null, null, null, defaultMass),
-    //p08 = new Pendulum(p03, null, null, null, defaultMass),
-    //p09 = new Pendulum(p07, null, null, null, defaultMass),
-    //p10 = new Pendulum(p06, null, null, null, defaultMass),
-    //p11 = new Pendulum(p08, null, null, null, defaultMass),
-    //p12 = new Pendulum(p10, null, null, null, defaultMass),
-    //p13 = new Pendulum(p12, null, null, null, defaultMass),
-    //p14 = new Pendulum(p11, null, null, null, defaultMass),
-    //p15 = new Pendulum(p11, null, null, null, defaultMass),
-    //p16 = new Pendulum(p09, null, null, null, defaultMass),
-    //p17 = new Pendulum(p13, null, null, null, defaultMass),
-    //p18 = new Pendulum(p15, null, null, null, defaultMass),
-    //p19 = new Pendulum(p16, null, null, null, defaultMass),
-    //p20 = new Pendulum(p18, null, null, null, defaultMass),
-    //p21 = new Pendulum(p20, null, null, null, defaultMass),
+    p00 = new Pendulum(null, width / 2, height * baseHeight),
+    p01 = new Pendulum(p00),
+    p02 = new Pendulum(p01),
+    p03 = new Pendulum(p02),
+    //p04 = new Pendulum(p01),
+    //p05 = new Pendulum(p04),
+    //p06 = new Pendulum(p05),
+    //p07 = new Pendulum(p04),
+    //p08 = new Pendulum(p03),
+    //p09 = new Pendulum(p07),
+    //p10 = new Pendulum(p06),
+    //p11 = new Pendulum(p08),
+    //p12 = new Pendulum(p10),
+    //p13 = new Pendulum(p12),
+    //p14 = new Pendulum(p11),
+    //p15 = new Pendulum(p11),
+    //p16 = new Pendulum(p09),
+    //p17 = new Pendulum(p13),
+    //p18 = new Pendulum(p15),
+    //p19 = new Pendulum(p16),
+    //p20 = new Pendulum(p18),
+    //p21 = new Pendulum(p20),
 
 ];
 //  tracer prep
@@ -118,13 +123,16 @@ function physics() {
             p.baseX = p.parent.endX;
             p.baseY = p.parent.endY;
         }
+        if (p.isMotor) {
+            p.angularVelocity = p.motorAngularVelocity;
+        } else {
+            p.angularMoment = 0;
+            p.angularMoment += p.mass * gravity * cos(p.angle) * p.length / 2;
+            p.angularVelocity += p.angularMoment / (p.length / 2) ** 2 * timeStepMS;
 
-        p.angularMoment = 0;
-        p.angularMoment += p.mass * gravity * cos(p.angle) * p.length / 2;
-        p.angularVelocity += p.angularMoment / (p.length / 2) ** 2 * timeStepMS;
-
-        // Energy loss
-        p.angularVelocity *= 1 - energyLossFactor / p.mass;
+            // Energy loss
+            p.angularVelocity *= 1 - energyLossFactor / p.mass;
+        }
         //Apply velocities
         p.angle -= p.angularVelocity * timeStepMS / 1000;
 
