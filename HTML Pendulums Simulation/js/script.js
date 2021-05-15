@@ -29,7 +29,7 @@ const defaultLength = 200;
 const defaultThickness = drawScale * 20;
 const defaultMass = 10;
 const gravity = 0.1;
-const energyLossFactor = 0.000; //0.001
+const energyLossFactor = 0.0005; //0.001
 const playSound = false;
 //#endregion
 //#region   //? Class definitions
@@ -42,7 +42,7 @@ class Pendulum {
             this.baseX = parent.endX;
             this.baseY = parent.endY;
         }
-        this.length = length;
+        this.length = length | defaultLength * (Math.random() * 1.4 + 0.2)
         this.mass = mass;
         this.angle = angle;
         this.colour = palette[randomInteger(palette.length)]
@@ -72,28 +72,28 @@ class Pendulum {
 //#region   //! Main loop
 const traceID = 3;
 const pendulumList = [
-    p00 = new Pendulum(null, width / 2, height * baseHeight, defaultLength, defaultMass),
-    p01 = new Pendulum(p00, null, null, defaultLength, defaultMass),
-    p02 = new Pendulum(p01, null, null, defaultLength, defaultMass),
-    p03 = new Pendulum(p02, null, null, defaultLength, defaultMass),
-    //p04 = new Pendulum(p01, null, null, defaultLength, defaultMass),
-    //p05 = new Pendulum(p04, null, null, defaultLength, defaultMass),
-    //p06 = new Pendulum(p05, null, null, defaultLength, defaultMass),
-    //p07 = new Pendulum(p04, null, null, defaultLength, defaultMass),
-    //p08 = new Pendulum(p03, null, null, defaultLength, defaultMass),
-    //p09 = new Pendulum(p07, null, null, defaultLength, defaultMass),
-    //p10 = new Pendulum(p06, null, null, defaultLength, defaultMass),
-    //p11 = new Pendulum(p08, null, null, defaultLength, defaultMass),
-    //p12 = new Pendulum(p10, null, null, defaultLength, defaultMass),
-    //p13 = new Pendulum(p12, null, null, defaultLength, defaultMass),
-    //p14 = new Pendulum(p11, null, null, defaultLength, defaultMass),
-    //p15 = new Pendulum(p11, null, null, defaultLength, defaultMass),
-    //p16 = new Pendulum(p09, null, null, defaultLength, defaultMass),
-    //p17 = new Pendulum(p13, null, null, defaultLength, defaultMass),
-    //p18 = new Pendulum(p15, null, null, defaultLength, defaultMass),
-    //p19 = new Pendulum(p16, null, null, defaultLength, defaultMass),
-    //p20 = new Pendulum(p18, null, null, defaultLength, defaultMass),
-    //p21 = new Pendulum(p20, null, null, defaultLength, defaultMass),
+    p00 = new Pendulum(null, width / 2, height * baseHeight, null, defaultMass),
+    p01 = new Pendulum(p00, null, null, null, defaultMass),
+    p02 = new Pendulum(p01, null, null, null, defaultMass),
+    p03 = new Pendulum(p02, null, null, null, defaultMass),
+    //p04 = new Pendulum(p01, null, null, null, defaultMass),
+    //p05 = new Pendulum(p04, null, null, null, defaultMass),
+    //p06 = new Pendulum(p05, null, null, null, defaultMass),
+    //p07 = new Pendulum(p04, null, null, null, defaultMass),
+    //p08 = new Pendulum(p03, null, null, null, defaultMass),
+    //p09 = new Pendulum(p07, null, null, null, defaultMass),
+    //p10 = new Pendulum(p06, null, null, null, defaultMass),
+    //p11 = new Pendulum(p08, null, null, null, defaultMass),
+    //p12 = new Pendulum(p10, null, null, null, defaultMass),
+    //p13 = new Pendulum(p12, null, null, null, defaultMass),
+    //p14 = new Pendulum(p11, null, null, null, defaultMass),
+    //p15 = new Pendulum(p11, null, null, null, defaultMass),
+    //p16 = new Pendulum(p09, null, null, null, defaultMass),
+    //p17 = new Pendulum(p13, null, null, null, defaultMass),
+    //p18 = new Pendulum(p15, null, null, null, defaultMass),
+    //p19 = new Pendulum(p16, null, null, null, defaultMass),
+    //p20 = new Pendulum(p18, null, null, null, defaultMass),
+    //p21 = new Pendulum(p20, null, null, null, defaultMass),
 
 ];
 //  tracer prep
@@ -124,7 +124,7 @@ function physics() {
         p.angularVelocity += p.angularMoment / (p.length / 2) ** 2 * timeStepMS;
 
         // Energy loss
-        p.angularVelocity *= 1 - energyLossFactor;
+        p.angularVelocity *= 1 - energyLossFactor / p.mass;
         //Apply velocities
         p.angle -= p.angularVelocity * timeStepMS / 1000;
 
