@@ -1,0 +1,17 @@
+{
+  "name": "html-css-only-image-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "CCheukKa",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "image-pixels": "^2.2.2",
+    "jimp": "^0.16.1",
+    "readimage": "^1.1.1"
+  }
+}
