@@ -18,6 +18,11 @@ bot.on("ready", () => {
 //#endregion
 
 bot.on("message", (message) => {
+    if (message.author.id == bot.user.id) { return; }
+    message.reply("I'm responsive.");
+    message.reply(message.content); // !! ??
+    console.log(message.content);   // !! ??
+    //
     if (!botConfig.discord.commandPrefix.includes(message.content.substring(0, 1))) { return; }
     let args = message.content.substring(1).split(' ');
     args[0] = args[0].toLowerCase();
@@ -195,7 +200,7 @@ function intervalPerMinute() {
                 }
                 if (member.voiceIdleTime == 0) {
                     member.voice.kick('Auto-kicked for idling for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes');
-                    member.send('You are auto-kicked from the voice channel **__' + channel.name + '__** in **__' + guild.name + '__** for idling alone for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes.').catch(error => {});
+                    member.send('You are auto-kicked from the voice channel **__' + channel.name + '__** in **__' + guild.name + '__** for idling alone for over ' + botConfig.voice.maxIdleTimeInMinutes + ' minutes.').catch(error => { });
                     generateLog('Kicked', memberToLogFormat(member) + ' from ' + channelToLogFormat(channel) + ' in ' + guildToLogFormat(guild));
                     member.voiceIdleTime = -1;
                 }
@@ -219,7 +224,7 @@ function getTimeStamp() {
 function generateLog(action, content) {
     let logMessage = getTimeStamp() + ' => ' + action + ': ' + content;
     console.log(logMessage);
-    fs.appendFile('./appdata/log.txt', logMessage + '\n', function(err) { if (err) throw err; })
+    fs.appendFile('./appdata/log.txt', logMessage + '\n', function (err) { if (err) throw err; })
     return;
 }
 
