@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Handwriting Input</title>
+</head>
+
+<link rel="stylesheet" href="./css/keyboard-style.css">
+<link rel="stylesheet" href="./css/stylesheet.css">
+<script src="./js/ocrad.js"></script>
+<script defer src="./js/script.js"></script>
+
+<body>
+    <div id="textbox"></div>
+
+    <div id="keyboard">
+        <div class="container">
+            <span id="Escape" class="esc button-style" style="line-height: 25px;">Esc</span>
+            <div class="first-line line">
+                <span id="Backquote" class="button button-style">`</span>
+                <span id="Digit1" class="button button-style">1</span>
+                <span id="Digit2" class="button button-style">2</span>
+                <span id="Digit3" class="button button-style">3</span>
+                <span id="Digit4" class="button button-style">4</span>
+                <span id="Digit5" class="button button-style">5</span>
+                <span id="Digit6" class="button button-style">6</span>
+                <span id="Digit7" class="button button-style">7</span>
+                <span id="Digit8" class="button button-style">8</span>
+                <span id="Digit9" class="button button-style">9</span>
+                <span id="Digit0" class="button button-style">0</span>
+                <span id="Minus" class="button button-style">-</span>
+                <span id="Equal" class="button button-style">=</span>
+                <span id="Backspace" class="button-style backspace" style="font-size: 15px;line-height: 48px">Backspace</span>
+            </div>
+            <div class="second-line line">
+                <span id="Tab" class="button-style">Tab</span>
+                <span id="KeyQ" class="button button-style">Q</span>
+                <span id="KeyW" class="button button-style">W</span>
+                <span id="KeyE" class="button button-style">E</span>
+                <span id="KeyR" class="button button-style">R</span>
+                <span id="KeyT" class="button button-style">T</span>
+                <span id="KeyY" class="button button-style">Y</span>
+                <span id="KeyU" class="button button-style">U</span>
+                <span id="KeyI" class="button button-style">I</span>
+                <span id="KeyO" class="button button-style">O</span>
+                <span id="KeyP" class="button button-style">P</span>
+                <span id="BracketLeft" class="button button-style">[</span>
+                <span id="BracketRight" class="button button-style">]</span>
+                <span id="Backslash" class="button button-style">\</span>
+            </div>
+
+            <div class="third-line line">
+                <span id="CapsLock" class="capsLock button-style" style="font-size: 15px; text-align: left; padding-left: 10px;">CapsLK</span>
+                <span id="KeyA" class="button button-style">A</span>
+                <span id="KeyS" class="button button-style">S</span>
+                <span id="KeyD" class="button button-style">D</span>
+                <span id="KeyF" class="button button-style">F</span>
+                <span id="KeyG" class="button button-style">G</span>
+                <span id="KeyH" class="button button-style">H</span>
+                <span id="KeyJ" class="button button-style">J</span>
+                <span id="KeyK" class="button button-style">K</span>
+                <span id="KeyL" class="button button-style">L</span>
+                <span id="Semicolon" class="button button-style">;</span>
+                <span id="Quote" class="button button-style">'</span>
+                <span id="Enter" class="button-style enter">Enter</span>
+            </div>
+
+            <div class="forth-line line">
+                <span id="ShiftLeft" class="button-style shift">Shift</span>
+                <span id="KeyZ" class="button button-style">Z</span>
+                <span id="KeyX" class="button button-style">X</span>
+                <span id="KeyC" class="button button-style">C</span>
+                <span id="KeyV" class="button button-style">V</span>
+                <span id="KeyB" class="button button-style">B</span>
+                <span id="KeyN" class="button button-style">N</span>
+                <span id="KeyM" class="button button-style">M</span>
+                <span id="Comma" class="button button-style">,</span>
+                <span id="Period" class="button button-style">.</span>
+                <span id="Slash" class="button button-style">/</span>
+                <span id="ShiftRight" class="button-style shift">Shift</span>
+
+            </div>
+
+            <div class="fifth-line line">
+                <span id="ControlLeft" class="ctrl button-style">Ctrl</span>
+                <span id="Fn" class="fn button-style">Fn</span>
+                <span id="MetaLeft" class="window button-style">Win</span>
+                <span id="AltLeft" class="alt button-style">Alt</span>
+                <span id="Space" class="space button-style"></span>
+                <span id="AltRight" class="alt button-style">Alt</span>
+                <span id="ControlRight" class="ctrl button-style">Ctrl</span>
+                <span class="arrows">
+                    <span id="ArrowLeft" class="left-arrow button-style">&leftarrow;</span>
+                    <span class="middle-arrows">
+                        <span id="ArrowUp" class="up-arrow">&uparrow;</span>
+                        <span id="ArrowDown" class="down-arrow">&downarrow;</span>
+                    </span>
+                    <span id="ArrowRight" class="right-arrow button-style">&rightarrow;</span>
+                </span>
+
+            </div>
+        </div>
+    </div>
+
+    <div><canvas id="drawBoard"></canvas></div>
+</body>
+
+</html>

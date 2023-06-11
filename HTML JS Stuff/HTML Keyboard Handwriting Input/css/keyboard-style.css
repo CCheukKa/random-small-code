@@ -1,0 +1,148 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 900px;
+    height: 365px;
+    background-color: #5e5e5e;
+    /* position: relative; */
+    /* margin: .5rem auto; */
+    display: grid;
+    padding: 20px;
+    grid-template-rows: 25px 60px 60px 60px 60px 60px;
+    border-radius: 15px;
+    opacity: 1;
+}
+
+.button-style {
+    -webkit-box-shadow: 0 0 10px -5px black;
+    box-shadow: 0 0 10px -5px black;
+    background: #3e3e3e;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    line-height: 45px;
+    position: relative;
+}
+
+.esc.button-style {
+    width: 50px;
+    height: 25px;
+    line-height: 0px;
+    font-size: 15px;
+}
+
+.line {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 80px;
+    grid-template-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 80px;
+    grid-column-gap: 10px;
+    margin: 9px 0 9px 0;
+}
+
+.first-line {
+    width: 85%;
+}
+
+.second-line {
+    -ms-grid-columns: 60px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 70px;
+    grid-template-columns: 60px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 70px;
+}
+
+.second-line .button {
+    padding: 0;
+    line-height: 45px;
+}
+
+
+.third-line {
+    -ms-grid-columns: 80px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 110px;
+    grid-template-columns: 80px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 110px;
+}
+
+.capsLock .light {
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    border-radius: 50%;
+    top: 5px;
+    right: 5px;
+    background-color: #2e2e2e;
+}
+
+.capsLock-on .light {
+    background-color: gold;
+    -webkit-box-shadow: 0px 0px 5px gold;
+    box-shadow: 0px 0px 5px gold;
+}
+
+.forth-line {
+    -ms-grid-columns: 125px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 125px;
+    grid-template-columns: 125px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 125px;
+}
+
+.shift {
+    font-size: 15px;
+    text-align: left;
+    padding-left: 10px;
+    line-height: 50px;
+}
+
+.fifth-line {
+    -ms-grid-columns: 50px 50px 50px 50px 300px 50px 50px auto;
+    grid-template-columns: 50px 50px 50px 50px 300px 50px 50px auto;
+}
+
+.arrows .button-style {
+    -webkit-box-shadow: 0 0 10px -5px black;
+    box-shadow: 0 0 10px -5px black;
+    background: #3e3e3e;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    line-height: 45px;
+    position: relative;
+}
+
+.arrows {
+    height: 50px;
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 60px 50px 60px;
+    grid-template-columns: 60px 50px 60px;
+    grid-column-gap: 10px;
+}
+
+.middle-arrows {
+    width: 50px;
+    height: 50px;
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-rows: 25px 25px;
+    grid-template-rows: 25px 25px;
+}
+
+.up-arrow,
+.down-arrow {
+    background: #3e3e3e;
+    width: 50px;
+    height: 25px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    line-height: 20px;
+    position: relative;
+}

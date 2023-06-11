@@ -1,0 +1,17 @@
+#keyboard {
+    scale: 0.4;
+    width: 100px;
+    height: 250px;
+    outline: 1px solid blue;
+    margin: 0;
+}
+
+html {
+    background-color: #111111;
+    color: #ffffff;
+    padding: 10px;
+}
+
+#drawBoard {
+    outline: 1px solid white;
+}
