@@ -1,0 +1,80 @@
+* {
+    /* outline: 1px solid white; */
+    transition: all 0.2s ease-in-out;
+
+    /* variables */
+    --tileSize: 10px;
+    --tileCount: 64;
+    --buffer: 0px;
+    --backgroundColour: #202636;
+    --boardColour: #323d55;
+    --tileCornerRadius: 0px;
+
+    /* tiles */
+    --grassColour: #91d099;
+    --waterColour: #91a6d0;
+    --shoreColour: #e6d9a6;
+    --mudColour: #a79880;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+    overflow: hidden;
+    background-color: var(--backgroundColour);
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#board {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(var(--tileCount), var(--tileSize));
+    grid-template-rows: repeat(var(--tileCount), var(--tileSize));
+    grid-gap: var(--buffer);
+    --length: calc((var(--tileSize) + var(--buffer)) * var(--tileCount) + var(--buffer) * 4);
+    width: var(--length);
+    height: var(--length);
+    background-color: var(--boardColour);
+    border-radius: var(--buffer);
+    padding: calc(var(--buffer));
+    outline: solid 1px #5b6882;
+    overflow: visible;
+}
+
+.tile {
+    display: flex;
+    width: var(--tileSize);
+    height: var(--tileSize);
+    border-radius: var(--tileCornerRadius);
+}
+
+.tile[data-type=undefined] {
+    background-color: var(--boardColour);
+    outline: dotted 1px #aeb7cb;
+}
+
+.tile[data-type=grass] {
+    background-color: var(--grassColour);
+}
+
+.tile[data-type=water] {
+    background-color: var(--waterColour);
+}
+
+.tile[data-type=shore] {
+    background-color: var(--shoreColour);
+}
+
+.tile[data-type=mud] {
+    background-color: var(--mudColour);
+}

@@ -1,0 +1,46 @@
+{
+    "success": true,
+    "constraints": [
+        {
+            "neightbourType": "grass",
+            "weights": [
+                {
+                    "type": "grass",
+                    "weight": 1
+                },
+                {
+                    "type": "water",
+                    "weight": 0.3
+                },
+                {
+                    "type": "sand",
+                    "weight": 0.1
+                }
+            ]
+        }
+    ],
+    "weights": {
+        "types": [
+            "grass",
+            "water",
+            "sand"
+        ],
+        "matrix": [
+            [
+                1.0,
+                0.3,
+                0.1
+            ],
+            [
+                0.3,
+                1.0,
+                0.3
+            ],
+            [
+                0.1,
+                0.3,
+                1.0
+            ]
+        ]
+    }
+}
