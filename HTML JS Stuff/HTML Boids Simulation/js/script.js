@@ -1,5 +1,4 @@
 //#region //! class setup
-function v() { return new Vector(); } //* potential shorthand for convenience
 class Vector {
     constructor(x = 0, y = 0) {
         this.x = x;
