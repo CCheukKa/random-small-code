@@ -1,0 +1,15 @@
+* {
+    /* outline: 1px solid white */
+}
+
+body {
+    background-color: #060e1d;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
