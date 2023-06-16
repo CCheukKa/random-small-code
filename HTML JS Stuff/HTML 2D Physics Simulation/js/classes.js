@@ -17,7 +17,7 @@ class Vector2D {
     reflect(normal) {
         const normalised = normal.normalised; // don't trust the input
         const dot = this.dot(normalised);
-        if (dot >= 0) { return this; } // no reflect
+        // if (dot >= 0) { return this; } // no reflect
         // if (dot >= 0) { return this.add(normalised); } // speed up
         const reflection = this.subtract(normalised.scale(2 * dot));
         // console.log({ this: this, normal, normalised, dot, reflection });

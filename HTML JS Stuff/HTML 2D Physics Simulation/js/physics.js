@@ -76,7 +76,7 @@ const minimumCollisionPoints = 5;
 
 // FIXME: make collision check better so this isnot necessary
 // double collisions are common, so cooldown is needed?
-const collisionCooldownFrames = 1;
+const collisionCooldownFrames = 2;
 
 function collide(entity) {
     //* overview:

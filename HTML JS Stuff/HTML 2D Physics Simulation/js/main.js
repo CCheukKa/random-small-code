@@ -60,21 +60,8 @@ const circle2 = new Entity({
         x => { return -Math.sqrt(20 ** 2 - x ** 2) },
     ]
 });
-const parabola = new Entity({
-    position: new Vector2D(canvasSize.x / 2, 100),
-    isStatic: true,
-    // boundingBoxCorners: [new Vector2D(-canvasSize.x / 2, 0), new Vector2D(canvasSize.x / 2, canvasSize.x ** 2 / 4 / 700)],
-    // meshFunction: new MeshFunction('y - x^2 / 700'),
-    renderInterface: {
-        fill: false,
-    },
-    smoothFunctions: [
-        // y = x^2 / 700
-        x => { return x ** 2 / 700 },
-    ]
-});
-// const parabola2 = new Entity({
-//     position: new Vector2D(canvasSize.x / 2, 98),
+// const parabola = new Entity({
+//     position: new Vector2D(canvasSize.x / 2, 100),
 //     isStatic: true,
 //     // boundingBoxCorners: [new Vector2D(-canvasSize.x / 2, 0), new Vector2D(canvasSize.x / 2, canvasSize.x ** 2 / 4 / 700)],
 //     // meshFunction: new MeshFunction('y - x^2 / 700'),
@@ -86,6 +73,39 @@ const parabola = new Entity({
 //         x => { return x ** 2 / 700 },
 //     ]
 // });
+const sine = new Entity({
+    position: new Vector2D(canvasSize.x / 2, 100),
+    isStatic: true,
+    renderInterface: {
+        fill: false,
+    },
+    smoothFunctions: [
+        // y = sin(x)
+        x => { return Math.sin(x / 80) * 50 },
+    ]
+});
+const leftWall = new Entity({
+    position: new Vector2D(0, 0),
+    isStatic: true,
+    renderInterface: {
+        fill: false,
+    },
+    smoothFunctions: [
+        // y = x
+        x => { return x },
+    ]
+});
+const rightWall = new Entity({
+    position: new Vector2D(canvasSize.x, 0),
+    isStatic: true,
+    renderInterface: {
+        fill: false,
+    },
+    smoothFunctions: [
+        // y = -x
+        x => { return -x },
+    ]
+});
 
 initialiseStaticEntities();
 
