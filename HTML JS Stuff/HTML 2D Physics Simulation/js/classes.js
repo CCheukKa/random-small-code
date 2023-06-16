@@ -13,6 +13,16 @@ class Vector2D {
     get magnitude() { return Math.sqrt(this.x * this.x + this.y * this.y); }
     get normalised() { return this.scale(1 / this.magnitude); }
     get direction() { return Math.atan2(this.y, this.x); }
+
+    reflect(normal) {
+        const normalised = normal.normalised; // don't trust the input
+        const dot = this.dot(normalised);
+        if (dot >= 0) { return this; } // no reflect
+        // if (dot >= 0) { return this.add(normalised); } // speed up
+        const reflection = this.subtract(normalised.scale(2 * dot));
+        // console.log({ this: this, normal, normalised, dot, reflection });
+        return reflection;
+    }
 }
 
 // class MeshFunction {
@@ -72,6 +82,8 @@ class Entity {
         this.physics = {
             points: [], // dynamically refreshed for non-static entities
             sectors: [], // dynamically refreshed for non-static entities
+            sectorPoints: [], // dynamically refreshed for non-static entities
+            collisionCooldown: [], // dynamically refreshed for non-static entities
         }
         //*
         entityList.push(this);

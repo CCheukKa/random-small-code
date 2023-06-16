@@ -1,7 +1,7 @@
 //#region //! constants
 const renderRate = 60;
 const renderDeltaTime = 1 / renderRate;
-const physicsTimeScale = 1;
+const physicsTimeScale = 0.5;
 const physicsRate = 200;
 const physicsDeltaTime = 1 / physicsRate;
 const canvasSize = new Vector2D(1000, 700);
@@ -39,7 +39,18 @@ canvasElement.height = canvasSize.y;
 const entityList = [];
 
 const circle = new Entity({
-    position: new Vector2D(canvasSize.x / 2, canvasSize.y / 2),
+    position: new Vector2D(canvasSize.x / 2 + 100, canvasSize.y / 2),
+    renderInterface: {
+        fill: true,
+    },
+    smoothFunctions: [
+        // x^2 + y^2 = 20^2
+        x => { return Math.sqrt(20 ** 2 - x ** 2) },
+        x => { return -Math.sqrt(20 ** 2 - x ** 2) },
+    ]
+});
+const circle2 = new Entity({
+    position: new Vector2D(canvasSize.x / 2 - 10, canvasSize.y / 2),
     renderInterface: {
         fill: true,
     },
@@ -62,6 +73,19 @@ const parabola = new Entity({
         x => { return x ** 2 / 700 },
     ]
 });
+// const parabola2 = new Entity({
+//     position: new Vector2D(canvasSize.x / 2, 98),
+//     isStatic: true,
+//     // boundingBoxCorners: [new Vector2D(-canvasSize.x / 2, 0), new Vector2D(canvasSize.x / 2, canvasSize.x ** 2 / 4 / 700)],
+//     // meshFunction: new MeshFunction('y - x^2 / 700'),
+//     renderInterface: {
+//         fill: false,
+//     },
+//     smoothFunctions: [
+//         // y = x^2 / 700
+//         x => { return x ** 2 / 700 },
+//     ]
+// });
 
 initialiseStaticEntities();
 
