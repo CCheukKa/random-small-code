@@ -2,7 +2,7 @@
 const renderRate = 60;
 const renderDeltaTime = 1 / renderRate;
 const physicsTimeScale = 0.5;
-const physicsRate = 200;
+const physicsRate = 60;
 const physicsDeltaTime = 1 / physicsRate;
 const canvasSize = new Vector2D(1000, 700);
 const palette = {
@@ -42,72 +42,57 @@ const circle = new Entity({
     position: new Vector2D(canvasSize.x / 2 + 100, canvasSize.y / 2),
     renderInterface: {
         fill: true,
+        renderFunctions: [
+            x => { return Math.sqrt(20 ** 2 - x ** 2) },
+            x => { return -Math.sqrt(20 ** 2 - x ** 2) },
+        ]
     },
-    smoothFunctions: [
-        // x^2 + y^2 = 20^2
-        x => { return Math.sqrt(20 ** 2 - x ** 2) },
-        x => { return -Math.sqrt(20 ** 2 - x ** 2) },
-    ]
+    physics: { collisionFunction: 'x^2 + y^2 = 20^2' }
 });
-const circle2 = new Entity({
-    position: new Vector2D(canvasSize.x / 2 - 10, canvasSize.y / 2),
-    renderInterface: {
-        fill: true,
-    },
-    smoothFunctions: [
-        // x^2 + y^2 = 20^2
-        x => { return Math.sqrt(20 ** 2 - x ** 2) },
-        x => { return -Math.sqrt(20 ** 2 - x ** 2) },
-    ]
-});
-// const parabola = new Entity({
-//     position: new Vector2D(canvasSize.x / 2, 100),
-//     isStatic: true,
-//     // boundingBoxCorners: [new Vector2D(-canvasSize.x / 2, 0), new Vector2D(canvasSize.x / 2, canvasSize.x ** 2 / 4 / 700)],
-//     // meshFunction: new MeshFunction('y - x^2 / 700'),
+// const circle2 = new Entity({
+//     position: new Vector2D(canvasSize.x / 2 - 10, canvasSize.y / 2),
 //     renderInterface: {
-//         fill: false,
+//         fill: true,
+//         renderFunctions: [
+//             x => { return Math.sqrt(20 ** 2 - x ** 2) },
+//             x => { return -Math.sqrt(20 ** 2 - x ** 2) },
+//         ]
 //     },
-//     smoothFunctions: [
-//         // y = x^2 / 700
-//         x => { return x ** 2 / 700 },
-//     ]
+//     physics: { collisionFunction: 'x^2 + y^2 = 20^2' }
 // });
 const sine = new Entity({
     position: new Vector2D(canvasSize.x / 2, 100),
     isStatic: true,
     renderInterface: {
         fill: false,
+        renderFunctions: [
+            x => { return Math.sin(x / 80) * 50 },
+        ]
     },
-    smoothFunctions: [
-        // y = sin(x)
-        x => { return Math.sin(x / 80) * 50 },
-    ]
+    physics: { collisionFunction: 'y = sin(x / 80) * 50' }
 });
-const leftWall = new Entity({
-    position: new Vector2D(0, 0),
-    isStatic: true,
-    renderInterface: {
-        fill: false,
-    },
-    smoothFunctions: [
-        // y = x
-        x => { return x },
-    ]
-});
-const rightWall = new Entity({
-    position: new Vector2D(canvasSize.x, 0),
-    isStatic: true,
-    renderInterface: {
-        fill: false,
-    },
-    smoothFunctions: [
-        // y = -x
-        x => { return -x },
-    ]
-});
-
-initialiseStaticEntities();
+// const leftWall = new Entity({
+//     position: new Vector2D(0, 0),
+//     isStatic: true,
+//     renderInterface: {
+//         fill: false,
+//         renderFunctions: [
+//             x => { return 1000 * x },
+//         ]
+//     },
+//     physics: { collisionFunction: 'x = 0' }
+// });
+// const rightWall = new Entity({
+//     position: new Vector2D(canvasSize.x, 0),
+//     isStatic: true,
+//     renderInterface: {
+//         fill: false,
+//         renderFunctions: [
+//             x => { return -1000 * x },
+//         ]
+//     },
+//     physics: { collisionFunction: 'x = 0' }
+// });
 
 var lastPhysicsFrameTime = new Date().getTime(); //* analytics
 const physicsFrameTimes = []; //* analytics

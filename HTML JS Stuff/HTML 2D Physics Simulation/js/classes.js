@@ -51,8 +51,11 @@ class Entity {
         // meshFunction,
         renderInterface = {
             fill: true,
+            renderFunctions: [], // array of functions that return y = f(x) as a strict continuous math function
         },
-        smoothFunctions, // array of functions that return y = f(x) as a strict continuous math function
+        physics = {
+            collisionFunction: '',
+        }
     } = {}) {
         // if (meshFunction === undefined) { //? default mesh function: circle of radius 100
         //     // if (!meshFunction) { throw new Error('Entity must have a mesh function') }
@@ -78,13 +81,7 @@ class Entity {
         // this.boundingBoxCorners = boundingBoxCorners;
         // this.meshFunction = meshFunction;
         this.renderInterface = renderInterface;
-        this.smoothFunctions = smoothFunctions;
-        this.physics = {
-            points: [], // dynamically refreshed for non-static entities
-            sectors: [], // dynamically refreshed for non-static entities
-            sectorPoints: [], // dynamically refreshed for non-static entities
-            collisionCooldown: [], // dynamically refreshed for non-static entities
-        }
+        this.physics = physics;
         //*
         entityList.push(this);
     }

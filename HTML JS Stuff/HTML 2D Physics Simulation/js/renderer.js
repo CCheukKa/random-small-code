@@ -235,8 +235,8 @@ function drawCircle(position, radius, colour) {
 const stepSize = 1;
 const overDraw = 10;
 function queueEntityFunction(entity) {
-    entity.smoothFunctions.forEach(smoothFunction => {
-        const points = getFunctionPoints(entity.position, smoothFunction);
+    entity.renderInterface.renderFunctions.forEach(renderFunction => {
+        const points = getFunctionPoints(entity.position, renderFunction);
         // console.log(points);
         mainDrawRequestQueue.push({
             reqFunction: drawPath,
