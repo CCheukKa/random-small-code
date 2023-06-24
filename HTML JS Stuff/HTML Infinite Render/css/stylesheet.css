@@ -1,0 +1,33 @@
+* {
+    /* outline: 1px solid white */
+}
+
+:root {
+    --palette-background: #453C67;
+    --palette-colour-1: #6D67E4;
+    --palette-colour-2: #46C2CB;
+    --palette-colour-3: #F2F7A1;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--palette-background);
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    gap: 0;
+}
+
+canvas {
+    outline: 5px solid var(--palette-colour-3);
+    /* border-radius: 10px; */
+}
