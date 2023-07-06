@@ -1,5 +1,5 @@
 //#region	//! Initialisation + Dependencies + Config fetch
-const fs = require("fs");
+const fs = require("fs-extra");
 const discord = require("discord.js");
 const { setInterval } = require("timers");
 var intervalFunction, botConfig;
@@ -177,7 +177,7 @@ bot.on('messageReactionAdd', (reaction, user) => {
 //#region   //! Parameters
 function updateParameters() {
     if (intervalFunction) { clearInterval(intervalFunction); }
-    botConfig = JSON.parse(fs.readFileSync("./appdata/botConfig.json"));
+    botConfig = fs.readJsonSync("./appdata/botConfig.json");
     intervalFunction = setInterval(() => {
         intervalPerMinute();
     }, 60000); //ANCHOR
