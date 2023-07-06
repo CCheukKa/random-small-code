@@ -1,9 +1,0 @@
-{
-    "cSpell.enableFiletypes": [
-        "!c"
-    ],
-    "files.associations": {
-        "*.ejs": "html",
-        "stdio.h": "c"
-    }
-}
