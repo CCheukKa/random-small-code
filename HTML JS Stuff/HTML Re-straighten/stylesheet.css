@@ -1,0 +1,38 @@
+:root {
+    --colour1: #171A21;
+    --colour2: #283758;
+    --colour3: #565578;
+    --colour4: #A28FB5;
+    --colour5: #AC9789;
+}
+
+html {
+    background-color: var(--colour1);
+    padding: 2%;
+}
+
+canvas {
+    border: 1px solid var(--colour5);
+}
+
+.container {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+span {
+    color: var(--colour4);
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 20px;
+}
