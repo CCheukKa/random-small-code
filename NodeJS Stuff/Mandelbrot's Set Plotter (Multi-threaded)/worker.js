@@ -3,9 +3,9 @@ const { Worker, isMainThread, workerData, parentPort } = require('worker_threads
 var drawListX = [],
     drawListY = [];
 
-let y = workerData.startPoint + workerData.range / workerData.userCPUCount * workerData.i;
-for (let j = 0; j <= Math.ceil(workerData.steps / workerData.userCPUCount); j++) {
-    subDraw(y + workerData.stepY * j);
+
+for (let y = workerData.startY; y < workerData.endY; y += workerData.stepY) {
+    subDrawRow(y);
 }
 parentPort.postMessage({
     xList: drawListX,
@@ -13,7 +13,7 @@ parentPort.postMessage({
 });
 return;
 
-function subDraw(y) {
+function subDrawRow(y) {
     if (Math.abs(y) >= 1.05) { return; }
     for (let x = workerData.centerX - workerData.drawScaleX / 2; x < workerData.centerX + workerData.drawScaleX / 2; x += workerData.stepX) {
         if (x >= 0.5 | x <= -2.05) { continue; }
@@ -25,23 +25,19 @@ function subDraw(y) {
 }
 
 function isInMandelbrot(a, b) {
-    let za = a,
-        zb = b,
-        hasVisited = [`${a}+${b}`];
+    //! FIXME: stuck here???
+    let za = a;
+    let zb = b;
+    // let hasVisited = [`${a}+${b}`];
+    let visited = 0;
     while (isFinite(za + zb)) {
         let temp = za * za - zb * zb + a;
         zb = 2 * za * zb + b;
         za = temp;
-        let repeat = false;
-        hasVisited.forEach(element => {
-            if (element == `${za}+${zb}`) {
-                repeat = true;
-                return;
-            }
-        });
-        if (repeat) { return true; }
-        if (hasVisited.length >= workerData.maxAllowedIterations) { return true; }
-        hasVisited.push(`${za}+${zb}`);
+        // if (hasVisited.some(element => { element == `${za}+${zb}` })) { return true; }
+        // if (hasVisited.length >= workerData.maxAllowedIterations) { return true; }
+        // hasVisited.push(`${za}+${zb}`);
+        if (++visited >= workerData.maxAllowedIterations) { return true; }
     }
     return false;
 }

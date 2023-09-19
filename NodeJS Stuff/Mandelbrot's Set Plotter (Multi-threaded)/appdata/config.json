@@ -1,13 +1,24 @@
 {
     "canvas": {
-        "x": 32767,
-        "y": 32767,
+        "x": 300,
+        "y": 300,
         "horizontalDrawScale": 0.025,
-        "palette": ["#1a2b47", "#25a282", "#bebe9d", "#cdab6b", "#c84c2b", "#287287", "#f0bb5e", "#a2837d", "#d26931"]
+        "palette": [
+            "#1a2b47",
+            "#25a282",
+            "#bebe9d",
+            "#cdab6b",
+            "#c84c2b",
+            "#287287",
+            "#f0bb5e",
+            "#a2837d",
+            "#d26931"
+        ]
     },
     "center": {
         "x": -0.735,
         "y": -0.205
     },
-    "maxAllowedIterations": 200
+    "maxAllowedIterations": 20,
+    "rowPerWorker": 1
 }

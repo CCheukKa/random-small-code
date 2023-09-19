@@ -3,7 +3,6 @@ const { createCanvas } = require("canvas");
 const fs = require("fs");
 const { exit } = require('process');
 const userCPUCount = require('os').cpus().length;
-let workerList = [];
 const config = JSON.parse(fs.readFileSync('./appdata/config.json', 'utf-8'));
 //
 const width = config.canvas.x; //max 32767
@@ -25,11 +24,13 @@ const yOffset = (centerY + drawScaleY / 2) / drawScaleY * height;
 //!
 const startTime = new Date();
 generateLog(`Attempting to draw ${drawScaleX} x ${drawScaleY} @ ${centerX}, ${centerY} in ${width}px ${height}px with ${userCPUCount} threads`)
-redraw();
+
+const workload = [];
+initialise();
 return;
 
 //#region   //? Processes functions
-function redraw() {
+function initialise() {
     drawRect(0, 0, width, height, palette[0]);
     //
     let stepX = drawScaleX / width, // 1px per step
@@ -37,7 +38,7 @@ function redraw() {
         invStepX = 1 / stepX,
         invStepY = 1 / stepY,
         ssCenterY = -centerY,
-        startPoint, endPoint, range, steps;
+        startPoint, endPoint, rangeY, rowCount;
 
     c.fillStyle = palette[1];
 
@@ -49,39 +50,56 @@ function redraw() {
         startPoint = ssCenterY - drawScaleY / 2;
         endPoint = Math.min(ssCenterY + drawScaleY / 2, +stepY);
     }
-    range = endPoint - startPoint;
-    steps = range / stepY;
+    rangeY = endPoint - startPoint;
+    rowCount = rangeY / stepY;
     //
-    let doneWorkers = 0;
+
+    //! split workload
+    const expectWorkerCount = Math.round(rowCount / config.rowPerWorker);
+    generateLog(`Expecting ${expectWorkerCount} workers`);
+    for (let i = 0; i < expectWorkerCount; i++) {
+        var endY = endPoint + i * config.rowPerWorker * stepY;
+        var startY = Math.min(endY + config.rowPerWorker * stepY, startPoint);
+        workload.push([startY, endY]);
+    }
+    console.log({ workload });
+
     for (let i = 0; i < userCPUCount; i++) { //assign workers
+        // for (let i = 0; i < 1; i++) { //assign workers
+        deployWorker(i);
+    }
+
+    function deployWorker(i) {
+        const work = workload.shift();
+        if (!work) { return; }
+        // console.log('-');
+        // console.log({ work });
+        // console.log({ workload });
         const worker = new Worker('./worker.js', {
             workerData: {
                 i: i,
-                userCPUCount: userCPUCount,
                 maxAllowedIterations: maxAllowedIterations,
-                range: range,
-                startPoint: startPoint,
-                steps: steps,
                 stepX: stepX,
                 stepY: stepY,
                 centerX: centerX,
                 drawScaleX: drawScaleX,
+                startY: work[0],
+                endY: work[1],
             }
         });
-        workerList.push(worker);
-        generateLog(`Thread ${i} created`);
-        worker.on('online', () => { generateLog(`Thread ${i} online`) });
+        generateLog(`Thread ${i} created: assigned ${work[0]}~${work[1]}`);
+        worker.on('online', () => { generateLog(`Thread ${i} online`); });
         worker.on('error', err => {
             generateLog(`Thread ${i} gave an error:`);
             console.error(err);
             fail(i);
         });
         worker.on('exit', code => {
-            //generateLog(`Thread ${i} exited with code ${code}`);
+            generateLog(`Thread ${i} exited with code ${code}`);
+            deployWorker(i);
         });
         worker.on('message', msg => {
-            let xList = msg.xList,
-                yList = msg.yList;
+            let xList = msg.xList, yList = msg.yList;
             length = xList.length;
             for (let i = 0; i < length; i++) {
                 c.fillRect(
@@ -95,12 +113,10 @@ function redraw() {
                     1, 1
                 );
             }
-            generateLog(`Processed results from thread ${i}`);
-            doneWorkers++;
-            if (doneWorkers == userCPUCount) { done(); }
+            generateLog(`Processed results from thread ${i}: length ${length}`);
         });
+        return;
     }
-    return;
 }
 
 function done() {
@@ -110,14 +126,6 @@ function done() {
     const timeTaken = endTime - startTime;
     generateLog(`Time taken: ${msToTimeString(timeTaken)}`);
     return;
-}
-
-function fail(id) {
-    generateLog(`Killing all threads due to an error from thread ${id}`);
-    workerList.forEach(worker => {
-        worker.terminate().catch(err => { console.error(err); })
-    });
-    exit();
 }
 
 //#endregion
