@@ -211,8 +211,9 @@
         lastTimestamp = timestamp;
 
         let acceleration = new Vector3(linAccSensor.x, linAccSensor.y, linAccSensor.z);
-        let velocity = acceleration.add(lastAcceleration).scale(dt / 2).add(lastVelocity);
-        position = velocity.add(lastVelocity).scale(dt / 2).add(position);
+        // let velocity = acceleration.add(lastAcceleration).scale(dt / 2).add(lastVelocity);
+        // position = velocity.add(lastVelocity).scale(dt / 2).add(position);
+        position = acceleration.add(lastAcceleration).scale(dt * dt / 2).add(position);
 
         lastAcceleration.set(acceleration);
         lastVelocity.set(velocity);
