@@ -16,6 +16,10 @@ class Vector3 {
         return new Vector3(this.x + vector.x, this.y + vector.y, this.z + vector.z);
     }
 
+    subtract(vector) {
+        return new Vector3(this.x - vector.x, this.y - vector.y, this.z - vector.z);
+    }
+
     scale(scalar) {
         return new Vector3(this.x * scalar, this.y * scalar, this.z * scalar);
     }
@@ -52,7 +56,9 @@ const colour = {
 /* -------------------------------------------------------------------------- */
 
 const SENSOR_FREQUENCY = 60;
-const linAccSensor = new LinearAccelerationSensor({ frequency: SENSOR_FREQUENCY });
+const linAccSensor = new LinearAccelerationSensor({
+    frequency: SENSOR_FREQUENCY
+});
 linAccSensor.addEventListener('reading', integratePosition);
 linAccSensor.start();
 
@@ -74,12 +80,28 @@ function initialiseCanvas(canvas, context) {
     context.fillStyle = colour[2];
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawLine(context, { x: 0, y: canvas.height / 2 }, { x: canvas.width, y: canvas.height / 2 }, colour[3]);
-    drawLine(context, { x: canvas.width / 2, y: 0 }, { x: canvas.width / 2, y: canvas.height }, colour[3]);
+    drawLine(context, {
+        x: 0,
+        y: canvas.height / 2
+    }, {
+        x: canvas.width,
+        y: canvas.height / 2
+    }, colour[3]);
+    drawLine(context, {
+        x: canvas.width / 2,
+        y: 0
+    }, {
+        x: canvas.width / 2,
+        y: canvas.height
+    }, colour[3]);
 }
 
 function setZero() {
     positionOffset.set(position);
+
+    initialiseCanvas(xyCanvasElement, xyCanvasContext);
+    initialiseCanvas(yzCanvasElement, yzCanvasContext);
+    initialiseCanvas(zxCanvasElement, zxCanvasContext);
 }
 
 function integratePosition() {
@@ -101,9 +123,11 @@ function integratePosition() {
 }
 
 function drawPosition() {
-    drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + position.x, xyCanvasElement.height / 2 - position.y, 5, colour[4]);
-    drawCircle(yzCanvasContext, yzCanvasElement.width / 2 + position.z, yzCanvasElement.height / 2 - position.y, 5, colour[4]);
-    drawCircle(zxCanvasContext, zxCanvasElement.width / 2 + position.x, zxCanvasElement.height / 2 - position.z, 5, colour[4]);
+    let offsetPosition = position.subtract(positionOffset).scale(10);
+
+    drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
+    drawCircle(yzCanvasContext, yzCanvasElement.width / 2 + offsetPosition.y, yzCanvasElement.height / 2 - offsetPosition.z, 5, colour[4]);
+    drawCircle(zxCanvasContext, zxCanvasElement.width / 2 + offsetPosition.z, zxCanvasElement.height / 2 - offsetPosition.x, 5, colour[4]);
 }
 
 /* -------------------------------------------------------------------------- */
