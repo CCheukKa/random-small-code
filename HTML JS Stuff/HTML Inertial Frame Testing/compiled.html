@@ -163,7 +163,6 @@
     var positionOffset = new Vector3();
     var lastTimestamp = 0;
     var position = new Vector3();
-    var lastVelocity = new Vector3();
     var lastAcceleration = new Vector3();
 
     setZero();
@@ -205,32 +204,33 @@
     function integratePosition() {
         var timestamp = linAccSensor.timestamp;
 
-        // console.log(linAccSensor.x, linAccSensor.y, linAccSensor.z);
+        console.log(offsetPosition);
 
         var dt = (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
 
         let acceleration = new Vector3(linAccSensor.x, linAccSensor.y, linAccSensor.z);
-        // let velocity = acceleration.add(lastAcceleration).scale(dt / 2).add(lastVelocity);
-        // position = velocity.add(lastVelocity).scale(dt / 2).add(position);
         position = acceleration.add(lastAcceleration).scale(dt * dt / 2).add(position);
 
         lastAcceleration.set(acceleration);
-        // lastVelocity.set(velocity);
 
         drawPosition();
     }
 
     function drawPosition() {
-        let offsetPosition = position.subtract(positionOffset).scale(1000);
-        console.log(offsetPosition);
+        let offsetPosition = position.subtract(positionOffset).scale(100000);
 
-        drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
-        drawCircle(yzCanvasContext, yzCanvasElement.width / 2 + offsetPosition.y, yzCanvasElement.height / 2 - offsetPosition.z, 5, colour[4]);
-        drawCircle(zxCanvasContext, zxCanvasElement.width / 2 + offsetPosition.z, zxCanvasElement.height / 2 - offsetPosition.x, 5, colour[4]);
+        drawDot(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
+        drawDot(yzCanvasContext, yzCanvasElement.width / 2 + offsetPosition.y, yzCanvasElement.height / 2 - offsetPosition.z, 5, colour[4]);
+        drawDot(zxCanvasContext, zxCanvasElement.width / 2 + offsetPosition.z, zxCanvasElement.height / 2 - offsetPosition.x, 5, colour[4]);
     }
 
     /* -------------------------------------------------------------------------- */
+
+    function drawDot(context, x, y, radius, colour) {
+        drawCircle(context, x, y, radius, colour[5]);
+        drawCircle(context, x, y, radius - 1, colour);
+    }
 
     function drawCircle(context, x, y, radius, colour) {
         context.fillStyle = colour;
