@@ -212,3 +212,24 @@ function getDistance(a, b) {
 function getLength(p) {
     return Math.sqrt(p.x * p.x + p.y * p.y);
 }
+
+function getGradient(x, y) { //~ This might be computationally way slower
+    let Ax = corners[0].x;
+    let Bx = corners[1].x;
+    let Cx = corners[2].x;
+    let Dx = corners[3].x;
+    let Ay = corners[0].y;
+    let By = corners[1].y;
+    let Cy = corners[2].y;
+    let Dy = corners[3].y;
+    //
+    let K = Bx * (1 - y) + Cx * y - Ax * (1 - y) - Dx * y;
+    let L = Ax * (1 - y) - Dx * y;
+    let N = By * (1 - y) + Cy * y - Ay * (1 - y) - Dy * y;
+    let P = Ay * (1 - y) - Dy * y;
+    //
+    let E = K * x + L - U;
+    let F = N * x + P - V;
+    // 
+    dx = 1 / 2 * Math.sqrt(E * E + F * F) * (2 * K * E + 2 * N * F);
+}
