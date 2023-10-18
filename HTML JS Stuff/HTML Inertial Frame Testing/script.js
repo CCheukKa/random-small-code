@@ -123,7 +123,7 @@ function integratePosition() {
 }
 
 function drawPosition() {
-    let offsetPosition = position.subtract(positionOffset).scale(10);
+    let offsetPosition = position.subtract(positionOffset).scale(100);
 
     drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
     drawCircle(yzCanvasContext, yzCanvasElement.width / 2 + offsetPosition.y, yzCanvasElement.height / 2 - offsetPosition.z, 5, colour[4]);
