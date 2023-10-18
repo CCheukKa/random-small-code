@@ -96,6 +96,31 @@
 </body>
 
 <script>
+    class Vector3 {
+        constructor(x = 0, y = 0, z = 0) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        set(vector) {
+            this.x = vector.x;
+            this.y = vector.y;
+            this.z = vector.z;
+            return this;
+        }
+
+        add(vector) {
+            return new Vector3(this.x + vector.x, this.y + vector.y, this.z + vector.z);
+        }
+
+        scale(scalar) {
+            return new Vector3(this.x * scalar, this.y * scalar, this.z * scalar);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+
     const CANVAS_WIDTH = 500;
     const CANVAS_HEIGHT = 500;
     const xyCanvasElement = document.getElementById('xyCanvas');
@@ -131,6 +156,14 @@
     linAccSensor.addEventListener('reading', integratePosition);
     linAccSensor.start();
 
+    var positionOffset = new Vector3();
+    var lastTimestamp = 0;
+    var position = new Vector3();
+    var lastVelocity = new Vector3();
+    var lastAcceleration = new Vector3();
+
+    setZero();
+
     initialiseCanvas(xyCanvasElement, xyCanvasContext);
     initialiseCanvas(yzCanvasElement, yzCanvasContext);
     initialiseCanvas(zxCanvasElement, zxCanvasContext);
@@ -157,16 +190,32 @@
         }, colour[3]);
     }
 
-    var xOffset;
-    var yOffset;
-    var zOffset;
-
     function setZero() {
-
+        positionOffset.set(position);
     }
 
     function integratePosition() {
+        var timestamp = linAccSensor.timestamp;
+
         console.log(linAccSensor.x, linAccSensor.y, linAccSensor.z);
+
+        var dt = (timestamp - lastTimestamp) / 1000;
+        lastTimestamp = timestamp;
+
+        let acceleration = new Vector3(linAccSensor.x, linAccSensor.y, linAccSensor.z);
+        let velocity = acceleration.add(lastAcceleration).scale(dt / 2).add(lastVelocity);
+        position = velocity.add(lastVelocity).scale(dt / 2).add(position);
+
+        lastAcceleration.set(acceleration);
+        lastVelocity.set(velocity);
+
+        drawPosition();
+    }
+
+    function drawPosition() {
+        drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + position.x, xyCanvasElement.height / 2 - position.y, 5, colour[4]);
+        drawCircle(yzCanvasContext, yzCanvasElement.width / 2 + position.z, yzCanvasElement.height / 2 - position.y, 5, colour[4]);
+        drawCircle(zxCanvasContext, zxCanvasElement.width / 2 + position.x, zxCanvasElement.height / 2 - position.z, 5, colour[4]);
     }
 
     /* -------------------------------------------------------------------------- */
