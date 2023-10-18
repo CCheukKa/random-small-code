@@ -106,8 +106,6 @@ function setZero() {
 function integratePosition() {
     var timestamp = linAccSensor.timestamp;
 
-    console.log(offsetPosition);
-
     var dt = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 
@@ -121,6 +119,8 @@ function integratePosition() {
 
 function drawPosition() {
     let offsetPosition = position.subtract(positionOffset).scale(100000);
+
+    console.log(offsetPosition);
 
     drawDot(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
     drawDot(yzCanvasContext, yzCanvasElement.width / 2 + offsetPosition.y, yzCanvasElement.height / 2 - offsetPosition.z, 5, colour[4]);
