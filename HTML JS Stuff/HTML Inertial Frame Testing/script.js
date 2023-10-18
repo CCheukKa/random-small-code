@@ -118,7 +118,7 @@ function integratePosition() {
     position = acceleration.add(lastAcceleration).scale(dt * dt / 2).add(position);
 
     lastAcceleration.set(acceleration);
-    lastVelocity.set(velocity);
+    // lastVelocity.set(velocity);
 
     drawPosition();
 }
