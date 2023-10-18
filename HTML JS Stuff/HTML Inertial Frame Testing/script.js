@@ -107,7 +107,7 @@ function setZero() {
 function integratePosition() {
     var timestamp = linAccSensor.timestamp;
 
-    // console.log(linAccSensor.x, linAccSensor.y, linAccSensor.z);
+    console.log(offsetPosition);
 
     var dt = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
