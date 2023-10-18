@@ -1,0 +1,65 @@
+:root {
+    --colour1: #171A21;
+    --colour2: #283758;
+    --colour3: #565578;
+    --colour4: #A28FB5;
+    --colour5: #AC9789;
+}
+
+html {
+    background-color: var(--colour1);
+    padding: 2%;
+}
+
+canvas {
+    border: 1px solid var(--colour5);
+}
+
+.graphContainer {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .graphContainer {
+        flex-direction: column;
+    }
+}
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.canvasContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: var(--colour4);
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 20px;
+}
+
+button {
+    background-color: var(--colour2);
+    color: var(--colour4);
+    font-size: 20pt;
+    border: 1px solid var(--colour4);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    cursor: pointer;
+}
