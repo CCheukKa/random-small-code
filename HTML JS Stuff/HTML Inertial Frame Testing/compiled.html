@@ -222,7 +222,7 @@
     }
 
     function drawPosition() {
-        let offsetPosition = position.subtract(positionOffset).scale(100);
+        let offsetPosition = position.subtract(positionOffset).scale(1000);
         console.log(offsetPosition);
 
         drawCircle(xyCanvasContext, xyCanvasElement.width / 2 + offsetPosition.x, xyCanvasElement.height / 2 - offsetPosition.y, 5, colour[4]);
