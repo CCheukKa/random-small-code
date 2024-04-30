@@ -15,7 +15,7 @@ async function getModInfos(apiURL, apiKey, modIDs = []) {
         //~ FIXME: why tf does this not work
         const response = await (await fetch(`${apiURL}/mods/search?gameid=432&slug=${id}`, { headers: { 'Accept': 'application/json', "x-api-key": apiKey } })).json();
         const mod = response.data[0];
-        console.log(`Fetched mod info for ${mod.name}`);
+        console.log(`Fetched mod info from CurseForge for ${mod.name}`);
         return new ModInfo(mod.name,
             [...new Set(
                 mod.latestFilesIndexes
