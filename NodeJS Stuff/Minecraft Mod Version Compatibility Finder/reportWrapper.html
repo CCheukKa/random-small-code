@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.css">
     <title>Compatibility Report</title>
     <style>
         :root {
             color-scheme: dark;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
 </head>
 
 <body class="markdown-body" style="padding: 50px; display: flex; justify-content: center; align-items: center;">
     <!-- REPORT -->
 </body>
+
+<script>
+    const reportTable = document.getElementsByTagName('table')[0];
+    reportTable.id = 'reportTable';
+    reportTable.classList.add('display');
+    new DataTable('#reportTable', {
+        pageLength: 100
+    });
+</script>
 
 </html>
