@@ -14,7 +14,7 @@ const config = fs.readJsonSync('./config.json');
     const acceptableGameVersions = await getAcceptableGameVersions();
     const modInfos = (await Promise.all([
         ModrinthScraper.getModInfos(config.modrinthApiUrl, config.modrinthModIDs),
-        // CurseforgeScraper.getModInfos(config.modrinthApiUrl, config.modrinthModIDs)
+        // CurseforgeScraper.getModInfos(config.modrinthApiUrl, fs.readFileSync('./curseforgeApiKey.txt', 'utf-8'), config.modrinthModIDs)
     ])).flat();
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
