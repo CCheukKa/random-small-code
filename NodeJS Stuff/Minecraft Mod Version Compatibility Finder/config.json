@@ -1,5 +1,5 @@
 {
-    "minimumVersion": "1.20",
+    "minimumVersion": "1.20.1",
     "modrinthApiUrl": "https://api.modrinth.com/v2",
     "modrinthModIDs": [
         "lithium",
