@@ -46,10 +46,10 @@ function buildCompatibleTable(acceptableGameVersions, modInfos = [new ModInfo()]
     fs.writeJsonSync('./output.json', { acceptableGameVersions, modInfos });
     fs.writeFileSync('./output.md', markdownTable(
         [
-            ['Mod', ...acceptableGameVersions],
-            ...modInfos.map(modInfo => [modInfo.title, ...modInfo.versionBooleans.map(boolean => boolean ? '✅' : '❌')])
+            ['Host', 'Mod', ...acceptableGameVersions],
+            ...modInfos.map(modInfo => [modInfo.host, modInfo.title, ...modInfo.versionBooleans.map(boolean => boolean ? '✅' : '❌')])
         ],
-        { align: ['l', ...Array(acceptableGameVersions.length).fill('c')] }
+        { align: ['l', 'l', ...Array(acceptableGameVersions.length).fill('c')] }
     ));
     fs.writeFileSync('./output.html',
         fs.readFileSync('./reportWrapper.html', 'utf8')
