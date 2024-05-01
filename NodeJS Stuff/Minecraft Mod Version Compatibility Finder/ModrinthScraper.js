@@ -2,7 +2,7 @@ import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
 async function getModInfos(apiURL, modIDs = []) {
-    return await Promise.all(modIDs.map(id => getModInfo(id)));
+    return Promise.all(modIDs.map(id => getModInfo(id)));
 
     async function getModInfo(id) {
         const response = await (await fetch(`${apiURL}/project/${id}`)).json();
