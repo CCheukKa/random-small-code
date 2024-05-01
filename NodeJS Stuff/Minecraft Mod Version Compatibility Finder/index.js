@@ -18,7 +18,7 @@ const config = fs.readJsonSync('./config.json');
     ])).flat();
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
-    buildCompatibleTable(acceptableGameVersions, modInfos);
+    buildCompatibilityTable(acceptableGameVersions, modInfos);
     open('./output.html');
 })();
 
@@ -42,7 +42,7 @@ async function compileVersionBooleans(acceptableGameVersions, modInfos = [new Mo
     });
 }
 
-function buildCompatibleTable(acceptableGameVersions, modInfos = [new ModInfo()]) {
+function buildCompatibilityTable(acceptableGameVersions, modInfos = [new ModInfo()]) {
     fs.writeJsonSync('./output.json', { acceptableGameVersions, modInfos });
     fs.writeFileSync('./output.md', markdownTable(
         [
