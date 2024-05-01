@@ -1,3 +1,6 @@
+//! API documentation:
+//* https://docs.modrinth.com/
+
 import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 

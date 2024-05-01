@@ -1,3 +1,6 @@
+//! API documentation:
+//* https://docs.curseforge.com/
+
 import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
