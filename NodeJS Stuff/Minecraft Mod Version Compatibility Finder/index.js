@@ -43,7 +43,6 @@ async function compileVersionBooleans(acceptableGameVersions, modInfos = [new Mo
 }
 
 function buildCompatibleTable(acceptableGameVersions, modInfos = [new ModInfo()]) {
-    modInfos.sort((a, b) => a.title.localeCompare(b.title));
     fs.writeJsonSync('./output.json', { acceptableGameVersions, modInfos });
     fs.writeFileSync('./output.md', markdownTable(
         [
