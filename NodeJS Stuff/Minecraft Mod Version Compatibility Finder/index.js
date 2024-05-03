@@ -19,7 +19,7 @@ const config = fs.readJsonSync('./config.json');
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
     buildCompatibilityTable(acceptableGameVersions, modInfos);
-    open('./output.html');
+    open('./report.html');
 })();
 
 async function getAcceptableGameVersions() {
@@ -43,16 +43,16 @@ async function compileVersionBooleans(acceptableGameVersions, modInfos = [new Mo
 }
 
 function buildCompatibilityTable(acceptableGameVersions, modInfos = [new ModInfo()]) {
-    fs.writeJsonSync('./output.json', { acceptableGameVersions, modInfos });
-    fs.writeFileSync('./output.md', markdownTable(
+    fs.writeJsonSync('./report.json', { acceptableGameVersions, modInfos });
+    fs.writeFileSync('./report.md', markdownTable(
         [
             ['Host', 'Mod', ...acceptableGameVersions],
             ...modInfos.map(modInfo => [modInfo.host, modInfo.title, ...modInfo.versionBooleans.map(boolean => boolean ? '✅' : '❌')])
         ],
         { align: ['l', 'l', ...Array(acceptableGameVersions.length).fill('c')] }
     ));
-    fs.writeFileSync('./output.html',
+    fs.writeFileSync('./report.html',
         fs.readFileSync('./reportWrapper.html', 'utf8')
-            .replace('<!-- REPORT -->', marked(fs.readFileSync('./output.md', 'utf8')))
+            .replace('<!-- REPORT -->', marked(fs.readFileSync('./report.md', 'utf8')))
     );
 }
