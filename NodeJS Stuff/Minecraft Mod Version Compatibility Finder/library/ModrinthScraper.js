@@ -8,7 +8,13 @@ async function getModInfos(log, apiURL, modIDs = []) {
     return (await (await fetch(`${apiURL}/projects?ids=${JSON.stringify(modIDs)}`)).json())
         .map(response => {
             log(`Fetched mod info from Modrinth for ${response.title}`);
-            return new ModInfo("Modrinth", response.title, response.game_versions.map(version => semver.coerce(version).version));
+            return new ModInfo(
+                ModInfo.hosts.MODRINTH,
+                response.title,
+                response.id,
+                response.slug,
+                response.game_versions.map(version => semver.coerce(version).version),
+            );
         });
 }
 

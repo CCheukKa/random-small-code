@@ -19,13 +19,16 @@ async function getModInfos(log, apiURL, apiKey, modIDs = []) {
         const mod = response.data[0];
         log(`Fetched mod info from CurseForge for ${mod.name}`);
         return new ModInfo(
-            "CurseForge",
+            ModInfo.hosts.CURSEFORGE,
             mod.name,
+            mod.id,
+            mod.slug,
             [...new Set(
                 mod.latestFilesIndexes
                     .filter(index => acceptableModLoaders.includes(index.modLoader))
                     .map(index => semver.coerce(index.gameVersion).version)
-            )]);
+            )],
+        );
     }
 }
 
