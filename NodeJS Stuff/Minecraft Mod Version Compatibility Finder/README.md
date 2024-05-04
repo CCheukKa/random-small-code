@@ -22,7 +22,7 @@ Before using this program, make sure you have the following installed:
 ## Usage
 
 1. Open a terminal and navigate to the project directory.
-2. ***You can ignore this step if you do not have mods hosted on CurseForge.*** Paste your CurseForge API key into `./config/curseforgeApiKey.txt`. You can get an API key by creating a CurseForge developer account [here](https://console.curseforge.com/).
+2. ***You can ignore this step if you do not have mods hosted on CurseForge.*** Paste your CurseForge API key into `./config/curseforgeApiKey.txt`; create the file if it does not yet exist. You can get an API key by creating a CurseForge developer account [here](https://console.curseforge.com/).
 3. Edit `./config/config.json` to specify the version and mods you want to check compatibility for. See [configuration](#configuration) for more information.
 4. Run the following command to start the program:
 
