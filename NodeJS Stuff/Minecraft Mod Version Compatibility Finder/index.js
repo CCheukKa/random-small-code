@@ -10,13 +10,15 @@ import ModrinthScraper from './library/ModrinthScraper.js';
 import CurseforgeScraper from './library/CurseforgeScraper.js';
 
 const config = fs.readJsonSync('./config/config.json');
+const curseforgeApiKey = fs.readFileSync('./config/curseforgeApiKey.txt', 'utf-8');
 
 (async () => {
     const acceptableGameVersions = await getAcceptableGameVersions();
-    const modInfos = (await Promise.all([
-        config.modrinthModSlugs ? ModrinthScraper.getModInfos(timestampLog, config.modrinthApiUrl, config.modrinthModSlugs) : [],
-        config.curseforgeModSlugs ? CurseforgeScraper.getModInfos(timestampLog, config.curseforgeApiUrl, fs.readFileSync('./config/curseforgeApiKey.txt', 'utf-8'), config.curseforgeModSlugs) : [],
-    ])).flat();
+    const modrinthModInfosPromise = config.modrinthModSlugs ? ModrinthScraper.getModInfos(timestampLog, config.modrinthApiUrl, config.modrinthModSlugs) : [];
+    const curseforgeModInfosPromise = config.curseforgeModSlugs ? CurseforgeScraper.getModInfos(timestampLog, config.curseforgeApiUrl, curseforgeApiKey, config.curseforgeModSlugs) : [];
+    const modInfos = (await Promise.all([modrinthModInfosPromise, curseforgeModInfosPromise,])).flat();
+    const modrinthModInfos = await modrinthModInfosPromise;
+    const curseforgeModInfos = await curseforgeModInfosPromise;
 
     config.modrinthModSlugs?.forEach(slug => {
         if (!modInfos.find(modInfo => modInfo.host === ModInfo.hosts.MODRINTH && modInfo.slug === slug)) {
@@ -28,6 +30,9 @@ const config = fs.readJsonSync('./config/config.json');
             timestampLog(`Mod slug ${slug} not found on CurseForge.`);
         }
     });
+
+    // ModrinthScraper.downloadMods(timestampLog, config.modrinthApiUrl, modrinthModInfos, "1.20.1", [ModInfo.modLoaders.QUILT, ModInfo.modLoaders.FABRIC]);
+    // CurseforgeScraper.downloadMods(timestampLog, config.curseforgeApiUrl, curseforgeApiKey, curseforgeModInfos, "1.20.1", [ModInfo.modLoaders.QUILT, ModInfo.modLoaders.FABRIC]);
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
     buildCompatibilityTable(acceptableGameVersions, modInfos);
