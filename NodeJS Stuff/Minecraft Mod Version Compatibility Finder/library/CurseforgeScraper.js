@@ -4,7 +4,7 @@
 import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
-async function getModInfos(apiURL, apiKey, modIDs = []) {
+async function getModInfos(log, apiURL, apiKey, modIDs = []) {
     return Promise.all(modIDs.map(id => getModInfo(id)));
 
     async function getModInfo(id) {
@@ -17,7 +17,7 @@ async function getModInfos(apiURL, apiKey, modIDs = []) {
 
         const response = await (await fetch(`${apiURL}/mods/search?gameid=432&slug=${id}`, { headers: { 'Accept': 'application/json', "x-api-key": apiKey } })).json();
         const mod = response.data[0];
-        console.log(`Fetched mod info from CurseForge for ${mod.name}`);
+        log(`Fetched mod info from CurseForge for ${mod.name}`);
         return new ModInfo(
             "CurseForge",
             mod.name,
