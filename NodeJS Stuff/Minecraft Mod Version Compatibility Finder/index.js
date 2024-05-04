@@ -4,17 +4,17 @@ import { markdownTable } from 'markdown-table';
 import { marked } from 'marked';
 import open from 'open';
 
-import { ModInfo } from './ModInfo.js';
-import ModrinthScraper from './ModrinthScraper.js';
-import CurseforgeScraper from './CurseforgeScraper.js';
+import { ModInfo } from './library/ModInfo.js';
+import ModrinthScraper from './library/ModrinthScraper.js';
+import CurseforgeScraper from './library/CurseforgeScraper.js';
 
-const config = fs.readJsonSync('./config.json');
+const config = fs.readJsonSync('./config/config.json');
 
 (async () => {
     const acceptableGameVersions = await getAcceptableGameVersions();
     const modInfos = (await Promise.all([
         config.modrinthModIDs ? ModrinthScraper.getModInfos(config.modrinthApiUrl, config.modrinthModIDs) : [],
-        config.curseforgeModIDs ? CurseforgeScraper.getModInfos(config.curseforgeApiUrl, fs.readFileSync('./curseforgeApiKey.txt', 'utf-8'), config.curseforgeModIDs) : [],
+        config.curseforgeModIDs ? CurseforgeScraper.getModInfos(config.curseforgeApiUrl, fs.readFileSync('./config/curseforgeApiKey.txt', 'utf-8'), config.curseforgeModIDs) : [],
     ])).flat();
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
