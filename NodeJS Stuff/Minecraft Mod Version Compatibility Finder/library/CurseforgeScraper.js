@@ -5,7 +5,7 @@ import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
 async function getModInfos(log, apiURL, apiKey, modSlugs = []) {
-    return (await Promise.all(modSlugs.map(id => getModInfo(id)))).filter(modInfo => modInfo !== undefined);
+    return (await Promise.all(modSlugs.map(slug => getModInfo(slug)))).filter(modInfo => modInfo !== undefined);
 
     async function getModInfo(slug) {
         /*
