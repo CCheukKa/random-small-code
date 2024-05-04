@@ -4,7 +4,7 @@
 import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
-async function getModInfos(log, apiURL, modIDs = []) {
+async function getModInfos(log, apiURL, modSlugs = []) {
     return (await (await fetch(`${apiURL}/projects?ids=${JSON.stringify(modIDs)}`)).json())
         .map(response => {
             log(`Fetched mod info from Modrinth for ${response.title}`);

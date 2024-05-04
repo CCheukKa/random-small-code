@@ -1,6 +1,7 @@
 export class ModInfo {
 
     static hosts = Object.freeze({
+        NULL: 'Null',
         MODRINTH: 'Modrinth',
         CURSEFORGE: 'CurseForge'
     });

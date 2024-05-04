@@ -4,10 +4,10 @@
 import semver from 'semver';
 import { ModInfo } from './ModInfo.js';
 
-async function getModInfos(log, apiURL, apiKey, modIDs = []) {
-    return Promise.all(modIDs.map(id => getModInfo(id)));
+async function getModInfos(log, apiURL, apiKey, modSlugs = []) {
+    return (await Promise.all(modSlugs.map(id => getModInfo(id)))).filter(modInfo => modInfo !== undefined);
 
-    async function getModInfo(id) {
+    async function getModInfo(slug) {
         /*
             Mod Loader IDs:
             4 = Fabric
@@ -15,8 +15,9 @@ async function getModInfos(log, apiURL, apiKey, modIDs = []) {
         */
         const acceptableModLoaders = [4, 5];
 
-        const response = await (await fetch(`${apiURL}/mods/search?gameid=432&slug=${id}`, { headers: { 'Accept': 'application/json', "x-api-key": apiKey } })).json();
+        const response = await (await fetch(`${apiURL}/mods/search?gameid=432&slug=${slug}`, { headers: { 'Accept': 'application/json', "x-api-key": apiKey } })).json();
         const mod = response.data[0];
+        if (!mod) { return; }
         log(`Fetched mod info from CurseForge for ${mod.name}`);
         return new ModInfo(
             ModInfo.hosts.CURSEFORGE,

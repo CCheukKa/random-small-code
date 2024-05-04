@@ -1,7 +1,7 @@
 {
     "minimumVersion": "1.20.1",
     "modrinthApiUrl": "https://api.modrinth.com/v2",
-    "modrinthModIDs": [
+    "modrinthModSlugs": [
         "lithium",
         "invmove",
         "auto-third-person",
@@ -93,7 +93,7 @@
         "simple-shulker-preview"
     ],
     "curseforgeApiUrl": "https://api.curseforge.com/v1",
-    "curseforgeModIDs": [
+    "curseforgeModSlugs": [
         "minihud",
         "tweakeroo",
         "illuminations",

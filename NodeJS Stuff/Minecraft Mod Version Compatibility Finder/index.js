@@ -14,9 +14,20 @@ const config = fs.readJsonSync('./config/config.json');
 (async () => {
     const acceptableGameVersions = await getAcceptableGameVersions();
     const modInfos = (await Promise.all([
-        config.modrinthModIDs ? ModrinthScraper.getModInfos(timestampLog, config.modrinthApiUrl, config.modrinthModIDs) : [],
-        config.curseforgeModIDs ? CurseforgeScraper.getModInfos(timestampLog, config.curseforgeApiUrl, fs.readFileSync('./config/curseforgeApiKey.txt', 'utf-8'), config.curseforgeModIDs) : [],
+        config.modrinthModSlugs ? ModrinthScraper.getModInfos(timestampLog, config.modrinthApiUrl, config.modrinthModSlugs) : [],
+        config.curseforgeModSlugs ? CurseforgeScraper.getModInfos(timestampLog, config.curseforgeApiUrl, fs.readFileSync('./config/curseforgeApiKey.txt', 'utf-8'), config.curseforgeModSlugs) : [],
     ])).flat();
+
+    config.modrinthModSlugs?.forEach(slug => {
+        if (!modInfos.find(modInfo => modInfo.host === ModInfo.hosts.MODRINTH && modInfo.slug === slug)) {
+            timestampLog(`Mod slug ${slug} not found on Modrinth.`);
+        }
+    });
+    config.curseforgeModSlugs?.forEach(slug => {
+        if (!modInfos.find(modInfo => modInfo.host === ModInfo.hosts.CURSEFORGE && modInfo.slug === slug)) {
+            timestampLog(`Mod slug ${slug} not found on CurseForge.`);
+        }
+    });
 
     await compileVersionBooleans(acceptableGameVersions, modInfos);
     buildCompatibilityTable(acceptableGameVersions, modInfos);
