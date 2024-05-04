@@ -6,6 +6,13 @@ export class ModInfo {
         CURSEFORGE: 'CurseForge'
     });
 
+    static modLoaders = Object.freeze({
+        NULL: 'Null',
+        QUILT: 'Quilt',
+        FABRIC: 'Fabric',
+        FORGE: 'Forge'
+    });
+
     /**
     * @typedef {Object} ModInfo
     * @property {string} host - The host of the mod.0
