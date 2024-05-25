@@ -64,7 +64,7 @@ function buildCompatibilityTable(acceptableGameVersions, modInfos = [new ModInfo
     fs.writeFileSync('./report.md', markdownTable(
         [
             ['Host', 'Mod', ...acceptableGameVersions],
-            ...modInfos.map(modInfo => [modInfo.host, modInfo.title, ...modInfo.versionBooleans.map(boolean => boolean ? '✅' : '❌')])
+            ...modInfos.map(modInfo => [`[${modInfo.host}](${modInfo.hostUrl})`, `[${modInfo.title}](${modInfo.url})`, ...modInfo.versionBooleans.map(boolean => boolean ? '✅' : '❌')])
         ],
         { align: ['l', 'l', ...Array(acceptableGameVersions.length).fill('c')] }
     ));

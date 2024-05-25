@@ -12,9 +12,11 @@ async function getModInfos(log, apiURL, modSlugs = []) {
             log(`Fetched mod info from Modrinth for ${response.title}`);
             return new ModInfo(
                 ModInfo.hosts.MODRINTH,
+                "https://modrinth.com/",
                 response.title,
                 response.id,
                 response.slug,
+                `https://modrinth.com/mod/${response.id}`,
                 response.game_versions.map(version => semver.coerce(version).version),
             );
         });

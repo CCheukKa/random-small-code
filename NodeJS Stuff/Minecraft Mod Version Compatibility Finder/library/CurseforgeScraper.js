@@ -23,9 +23,11 @@ async function getModInfos(log, apiURL, apiKey, modSlugs = []) {
         log(`Fetched mod info from CurseForge for ${mod.name}`);
         return new ModInfo(
             ModInfo.hosts.CURSEFORGE,
+            "https://www.curseforge.com/minecraft",
             mod.name,
             mod.id,
             mod.slug,
+            mod.links.websiteUrl,
             [...new Set(
                 mod.latestFilesIndexes
                     .filter(index => acceptableModLoaders.includes(index.modLoader))
