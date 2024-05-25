@@ -69,7 +69,7 @@ function buildCompatibilityTable(acceptableGameVersions, modInfos = [new ModInfo
         { align: ['l', 'l', ...Array(acceptableGameVersions.length).fill('c')] }
     ));
     fs.writeFileSync('./report.html',
-        fs.readFileSync('./reportWrapper.html', 'utf8')
+        fs.readFileSync('./app/reportWrapper.html', 'utf8')
             .replace('<!-- REPORT -->', marked(fs.readFileSync('./report.md', 'utf8')))
     );
 }
