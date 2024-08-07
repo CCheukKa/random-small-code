@@ -90,13 +90,15 @@
         "highlight",
         "shulker+",
         "nvidium",
-        "simple-shulker-preview"
+        "simple-shulker-preview",
+        "flourish",
+        "ash-api",
+        "beacons-for-all"
     ],
     "curseforgeApiUrl": "https://api.curseforge.com/v1",
     "curseforgeModSlugs": [
         "minihud",
         "tweakeroo",
-        "illuminations",
         "litematica",
         "item-scroller",
         "sleeping-overhaul-2",

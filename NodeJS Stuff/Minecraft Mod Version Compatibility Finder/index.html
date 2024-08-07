@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+    </style>
+</head>
+
+<body>
+    <button type="submit">Button</button>
+</body>
+
+<script>
+    const button = document.querySelector('button');
+    button.addEventListener('click', () => {
+        console.log('Button clicked');
+
+        httpGetAsync('http://localhost:8000/api', response => {
+            console.log(response);
+        });
+
+        webSocket.send('Hello, WebSocket!');
+    })
+
+    function httpGetAsync(url, callback) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                callback(xmlHttp.responseText);
+        }
+        xmlHttp.open("GET", url, true);
+        xmlHttp.send(null);
+    }
+
+    const webSocket = new WebSocket('ws://localhost:8001');
+    webSocket.onopen = () => {
+        console.log('WebSocket opened');
+    }
+    webSocket.onmessage = event => {
+        console.log('WebSocket message:', event.data);
+    }
+    webSocket.onclose = () => {
+        console.log('WebSocket closed');
+    }
+
+</script>
+
+</html>
