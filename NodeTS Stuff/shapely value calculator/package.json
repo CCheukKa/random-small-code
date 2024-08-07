@@ -1,0 +1,11 @@
+{
+    "name": "shapely-value-calculator",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "scripts": {
+        "start": "npx ts-node index.ts"
+    },
+    "author": "CCheukKa",
+    "license": "ISC",
+    "description": ""
+}
