@@ -25,8 +25,14 @@ function calculateShapely(costs: PlayerValue) {
     const valuePercents: PlayerValue = Object.fromEntries(
         Object.entries(shapleyValues).map(([player, value]) => [player, value / costs[player] * 100])
     );
+    type PlayerData = { player: string, cost: number, shapley: number, difference: number, percent: number };
+    const playerData: PlayerData[] = Object.entries(costs).map(([player, cost]) => ({
+        player,
+        cost,
+        shapley: shapleyValues[player],
+        difference: valueDifferences[player],
+        percent: valuePercents[player],
+    }));
 
-    console.log(shapleyValues);
-    console.log(valueDifferences);
-    console.log(valuePercents);
+    console.table(playerData);
 }
