@@ -13,3 +13,5 @@ WebGL Testing/
 node_modules/
 /HTML JS Stuff/HTML Eqation Solver/equation.json
 .parcel-cache/
+/Rust Stuff/**/target/
+/Rust Stuff/**/Cargo.lock
