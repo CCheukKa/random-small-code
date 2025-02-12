@@ -11,7 +11,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "image-pixels": "^2.2.2",
-    "jimp": "^0.16.1",
+    "jimp": "^0.22.12",
     "readimage": "^1.1.1"
   }
 }
