@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import https from 'https';
 
 async function getModInfos(log, apiURL, modSlugs = []) {
-    return (await (await fetch(`${apiURL}/projects?ids=${JSON.stringify(modSlugs).replace('+', '%2B')}`)).json())
+    return (await (await fetch(`${apiURL}/projects?ids=${JSON.stringify(modSlugs).replace(/\+/g, '%2B')}`)).json())
         .map(response => {
             log(`Fetched mod info from Modrinth for ${response.title}`);
             return new ModInfo(
