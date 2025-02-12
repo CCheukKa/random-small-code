@@ -1,9 +1,9 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const Jimp = require("jimp");
 
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 
-Jimp.read(config.filePath, function(err, image) {
+Jimp.read(config.filePath, function (err, image) {
     if (err) { throw err }
 
     let pixelSize = config.pixelSize;
@@ -20,7 +20,7 @@ function compile(image, pixelSize) {
     for (let y = 1; y <= image.bitmap.height; y++) {
         for (let x = 1; x <= image.bitmap.width; x++) {
             let pixel = Jimp.intToRGBA(image.getPixelColour(x - 1, y - 1));
-            stylesheetString += `${x*pixelSize}px ${y*pixelSize}px 0px 0px rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a}),`;
+            stylesheetString += `${x * pixelSize}px ${y * pixelSize}px 0px 0px rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a}),`;
         }
     }
     stylesheetString = stylesheetString.substring(0, stylesheetString.length - 1);
