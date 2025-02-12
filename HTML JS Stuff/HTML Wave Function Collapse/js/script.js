@@ -55,7 +55,11 @@ var config = {};
     async function fetchConfig(callback) { //? fetch md instead
         let mdContent = await (await fetch('./config/config.md')).text();
         // console.log(mdContent);
-        mdContent = mdContent.replace(/<!--[\s\S]*?-->/g, ''); // remove comments
+        let previous;
+        do {
+            previous = mdContent;
+            mdContent = mdContent.replace(/<!--[\s\S]*?-->/g, ''); // remove comments
+        } while (mdContent !== previous);
         let lines = mdContent.split('\r\n'); // split into lines
         lines = lines.filter(line => line.trim() !== ''); // remove empty lines
         lines = lines.map(line => line.replace(/\s/g, '')); // remove space characters
