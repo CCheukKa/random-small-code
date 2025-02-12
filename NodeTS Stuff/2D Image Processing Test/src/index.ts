@@ -1,6 +1,9 @@
-import Pixel from "./pixel";
-import Jimp from "jimp";
+import { Jimp } from "jimp";
 
-Jimp.read("./images/base.png", (err, image) => {
+Jimp.read("./images/base.png")
+    .then(image => {
 
-});
+    })
+    .catch(err => {
+        console.error("Error reading the image:", err);
+    });
