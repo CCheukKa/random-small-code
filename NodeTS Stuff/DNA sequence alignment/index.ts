@@ -7,14 +7,13 @@ enum ACID {
 };
 function getPairScore(a: ACID, b: ACID): number {
     const set = new Set<ACID>([a, b]);
-    if (set.has(ACID._)) { return -10; }
+    if (set.has(ACID._)) { return -3; }
     if (a === b) { return 2; }
     switch (true) {
         case set.has(ACID.A) && set.has(ACID.G):
         case set.has(ACID.C) && set.has(ACID.T):
-            return -5;
         default:
-            return -7;
+            return -2;
     }
 }
 type sequence = ACID[];
@@ -43,8 +42,8 @@ function logSequence(seq: sequence): void {
     );
 }
 
-const seq1 = stringToSequence('ACCG');
-const seq2 = stringToSequence('CCT');
+const seq1 = stringToSequence('CACATTA'); // ↔
+const seq2 = stringToSequence('CAACGAT'); // ↕
 logSequence(seq1);
 logSequence(seq2);
 align(seq1, seq2);
