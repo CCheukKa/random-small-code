@@ -51,17 +51,18 @@ async function encryptData(text, password) {
     resultBuffer.set(iv, salt.length);
     resultBuffer.set(new Uint8Array(encryptedBuffer), salt.length + iv.length);
     return arrayBufferToBase64(resultBuffer);
-}
+    /* -------------------------------------------------------------------------- */
 
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const chunkSize = 1024;
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-        const chunk = bytes.slice(i, Math.min(i + chunkSize, bytes.length));
-        binary += String.fromCharCode.apply(null, chunk);
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const chunkSize = 1024;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.slice(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
     }
-    return btoa(binary);
 }
 
 async function decryptData(encryptedBase64, password) {
@@ -81,15 +82,16 @@ async function decryptData(encryptedBase64, password) {
 
     const decoder = new TextDecoder();
     return decoder.decode(decryptedBuffer);
-}
+    /* -------------------------------------------------------------------------- */
 
-function base64ToArrayBuffer(base64) {
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+    function base64ToArrayBuffer(base64) {
+        const binaryString = atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
     }
-    return bytes;
 }
 
 encryptButton.addEventListener("click", async () => {
