@@ -9,7 +9,7 @@
     "author": "CCheukKa",
     "license": "ISC",
     "devDependencies": {
-        "electron": "^25.8.4",
+        "electron": "^35.7.5",
         "typescript": "^5.1.3"
     }
 }
