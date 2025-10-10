@@ -1,0 +1,31 @@
+:root {
+    --darker: #112929;
+    --dark: #1d7763;
+    --neutral: #c1d079;
+    --bright: #f6cc4b;
+    --brighter: #f89b30;
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    transition: all 0.2s ease-in-out;
+}
+
+body {
+    background-color: var(--darker);
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--neutral);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100svh;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
