@@ -12,7 +12,7 @@ model.addString(mzn);
 performance.mark('solve-start');
 const solve = model.solve({
     options: {
-        solver: 'gecode',
+        solver: 'chuffed',
         'time-limit': 10000,
         statistics: true,
         "output-objective": true,
