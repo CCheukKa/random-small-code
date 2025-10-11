@@ -1,23 +1,34 @@
 int: X_COUNT = 5;
 int: Y_COUNT = 3;
-array[int] of float: X_GAPS = [];
-array[int] of float: Y_GAPS = [];
+array[int] of float: X_GAPS = [2.5];
+array[int] of float: Y_GAPS = [1.5, 2.5];
 
 int: X_PENALTY = 1;
 int: Y_PENALTY = 2;
 int: X_GAP_PENALTY = 4;
 int: Y_GAP_PENALTY = 8;
 
+type Gap = record(1..X_COUNT: x, 1..Y_COUNT: y);
 type Seat = record(var 1..X_COUNT: x, var 1..Y_COUNT: y);
 type Group = array[int] of var Seat;
 
-array[1..1] of var Seat: g0;
-array[1..2] of var Seat: g1;
-array[1..2] of var Seat: g2;
-array[1..5] of var Seat: g3;
-array[int] of Group: groups = [g0, g1, g2, g3];
-constraint g0[1].x = 3;
-constraint g0[1].y = 1;
+% TODO: Support individual gaps
+% Gap: gap1 = (x: 2, y: 1);
+% Gap: gap2 = (x: 2, y: 2);
+% array[int] of Gap: GAPS = [gap1, gap2];
+
+% Inject here
+% array[1..<n>] of var Seat: group<n>;
+% array[int] of Group: groups = [group<n>, ...];
+% constraint group<n>[<i>].x = <x>;
+% constraint group<n>[<i>].y = <y>;
+array[1..1] of var Seat: group0;
+array[1..2] of var Seat: group1;
+array[1..2] of var Seat: group2;
+array[1..5] of var Seat: group3;
+array[int] of Group: groups = [group0, group1, group2, group3];
+constraint group0[1].x = 3;
+constraint group0[1].y = 1;
 
 int: groupCount = length(groups);
 int: totalCount = sum([length(groups[i]) | i in 1..groupCount]);

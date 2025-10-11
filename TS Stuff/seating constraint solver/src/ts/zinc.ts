@@ -1,16 +1,13 @@
-import * as MiniZinc from "minizinc";
+import type { Model as MiniZincModelType } from "minizinc";
 
-MiniZinc.init({
-    minizinc: "C:/Users/ccheu/AppData/Local/Programs/MiniZinc/minizinc.exe"
-});
+// @ts-ignore
+const MiniZincRuntime = await import('https://cdn.jsdelivr.net/npm/minizinc/dist/minizinc.mjs');
+const ModelCtor = MiniZincRuntime.Model;
 
-const model = new MiniZinc.Model();
-// model.addFile('problem.mzn', 'var 1..3: x; int: y;');
-model.addFile('problem.mzn');
-// model.addJson({})
-// model.addString('int: z;');
-// model.addDznString('y = 1;');
-// model.addJson({ z: 2 });
+const model = new ModelCtor() as MiniZincModelType;
+
+const mzn = await fetch('src/problem.mzn').then(res => res.text());
+model.addString(mzn);
 
 const solve = model.solve({
     options: {
@@ -22,7 +19,6 @@ const solve = model.solve({
         "all-solutions": true,
     }
 });
-
 
 solve.on('solution', solution => {
     console.log("Solution:");
