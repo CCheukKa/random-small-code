@@ -4,6 +4,7 @@ const ModelCtor = MiniZincRuntime.Model;
 const model = new ModelCtor();
 const mzn = await fetch('src/problem.mzn').then(res => res.text());
 model.addString(mzn);
+performance.mark('solve-start');
 const solve = model.solve({
     options: {
         solver: 'gecode',
@@ -23,6 +24,10 @@ solve.then(result => {
     console.log(result.statistics);
     console.log(result.solution?.output.json);
     console.log(`Status: ${result.status}`);
+    performance.mark('solve-end');
+    performance.measure('solve', 'solve-start', 'solve-end');
+    const measure = performance.getEntriesByName('solve')[0];
+    console.log(measure);
 });
 export {};
 //# sourceMappingURL=zinc.js.map
