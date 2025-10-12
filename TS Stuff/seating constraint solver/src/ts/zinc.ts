@@ -1,10 +1,11 @@
-import type { Model as MiniZincModelType } from "minizinc";
+import type { Model as MiniZincModel } from "minizinc";
+type MiniZinc = typeof import('minizinc');
 
 // @ts-ignore
-const MiniZincRuntime = await import('https://cdn.jsdelivr.net/npm/minizinc/dist/minizinc.mjs');
+const MiniZincRuntime: MiniZinc = await import('https://cdn.jsdelivr.net/npm/minizinc/dist/minizinc.mjs');
 const ModelCtor = MiniZincRuntime.Model;
 
-const model = new ModelCtor() as MiniZincModelType;
+const model = new ModelCtor() as MiniZincModel;
 
 const mzn = await fetch('src/problem.mzn').then(res => res.text());
 model.addString(mzn);
