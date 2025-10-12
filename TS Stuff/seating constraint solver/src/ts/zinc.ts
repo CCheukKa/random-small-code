@@ -5,6 +5,10 @@ type MiniZinc = typeof import('minizinc');
 const MiniZincRuntime: MiniZinc = await import('https://cdn.jsdelivr.net/npm/minizinc/dist/minizinc.mjs');
 const ModelCtor = MiniZincRuntime.Model;
 
+await MiniZincRuntime.init().then(() => console.log('MiniZinc initialized'));
+await MiniZincRuntime.version().then(version => console.log(version));
+await MiniZincRuntime.solvers().then(solvers => console.log({ solvers }));
+
 const model = new ModelCtor() as MiniZincModel;
 
 const mzn = await fetch('src/problem.mzn').then(res => res.text());
