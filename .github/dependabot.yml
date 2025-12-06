@@ -13,3 +13,11 @@ updates:
       all-dependencies:
         patterns:
           - "*" # Match all dependencies so they are combined into one PR
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*" # Match all dependencies so they are combined into one PR
