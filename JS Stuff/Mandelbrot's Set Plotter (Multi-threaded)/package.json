@@ -9,7 +9,7 @@
   "author": "CCheukKa",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.11.2",
+    "canvas": "^3.2.1",
     "fs": "0.0.1-security"
   }
 }
